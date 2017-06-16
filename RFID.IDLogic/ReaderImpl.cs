@@ -32,7 +32,7 @@ namespace InformSystema.RFID.IDLogic
 		/// <returns>метка</returns>
 		protected abstract ItemImpl GetItem(string uid);
 
-		private string sReaded = "";
+		private string _sReaded = "";
 
 		#region IReader
 		/// <summary>
@@ -57,7 +57,7 @@ namespace InformSystema.RFID.IDLogic
 					{
 						Parameters.Add(field);
 					}
-					sReaded = Read();
+					_sReaded = Read();
 				}
 			}
 			catch (Exception ex)
@@ -87,14 +87,14 @@ namespace InformSystema.RFID.IDLogic
 				try
 				{
 					string uids = Read();
-					if (uids.Length > 0 || uids != sReaded)
+					if (uids.Length > 0 || uids != _sReaded)
 					{
 						items.AddRange(uids.Split(',').Select(GetItem));
-						if (OnChange != null && uids != sReaded)
+						if (OnChange != null && uids != _sReaded)
 						{
 							OnChange(this, new EventArgs());
 						}
-						sReaded = uids;
+						_sReaded = uids;
 					}
 				}
 				catch (Exception ex)

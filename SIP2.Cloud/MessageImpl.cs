@@ -40,6 +40,8 @@ namespace InformSystema.SIP2.Cloud
 			get { return this.ToArray(); }
 		}
 
+		public Sip2Version Version { get { return Sip2Version.V200; } }
+
 		public event ErrorEventHandler OnError;
 	}
 }

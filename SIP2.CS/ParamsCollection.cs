@@ -4,12 +4,14 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using InformSystema.Interface;
 using InformSystema.Interface.SIP2;
 
 namespace InformSystema.SIP2.CS
 {
-	public class ParamsCollection : ConfigurationElementCollection, ISip2Answers
+	public class ParamsCollection : ConfigurationElementCollection
 	{
 		public ParamsCollection() { }
 		#region ConfigurationElementCollection
@@ -65,17 +67,29 @@ namespace InformSystema.SIP2.CS
 			get { return (string)base["object"]; }
 			set { base["object"] = value; }
 		}
-		[ConfigurationProperty("port", IsRequired = true)]
+		[ConfigurationProperty("port", DefaultValue = 6001)]
 		public int Port
 		{
 			get { return Convert.ToInt16(base["port"]); }
 			set { base["port"] = value; }
 		}
-		[ConfigurationProperty("proto", IsRequired = true)]
-		public string Proto
+		[ConfigurationProperty("proto", DefaultValue = ProtocolType.Tcp)]
+		public ProtocolType Proto
 		{
-			get { return (string)base["proto"]; }
+			get { return (ProtocolType)base["proto"]; }
 			set { base["port"] = value; }
+		}
+		[ConfigurationProperty("address", DefaultValue = null)]
+		public string Address
+		{
+			get { return (string)base["address"]; }
+			set { base["address"] = value; }
+		}
+		[ConfigurationProperty("debug", DefaultValue = false)]
+		public Boolean Debug
+		{
+			get { return Convert.ToBoolean(base["debug"]); }
+			set { base["debug"] = value; }
 		}
 		public IField[] Params
 		{
@@ -84,25 +98,5 @@ namespace InformSystema.SIP2.CS
 				return this.Cast<IField>().ToArray();
 			}
 		}
-
-		private ISip2Answers _answer = null;
-
-		#region implementation ISip2Answers
-		public bool Init(IField[] paramsFields)
-		{
-			if (_answer == null) _answer = (ISip2Answers)Activator.CreateInstance(Type.GetTypeFromProgID(Name));
-			return (_answer != null && _answer.Init(paramsFields));
-		}
-
-		public ISip2Command[] Commands
-		{
-			get { return (_answer != null) ? _answer.Commands : new List<ISip2Command>().ToArray(); }
-		}
-		public event ErrorEventHandler OnError
-		{
-			add { if (_answer != null) _answer.OnError += value; }
-			remove { if (_answer != null) _answer.OnError += value; }
-		}
-		#endregion
 	}
 }

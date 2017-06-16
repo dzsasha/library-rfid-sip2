@@ -19,7 +19,7 @@ namespace InformSystema.RFID.IDLogic
 				int iErr = Externals.EasGet((this as IItem).Id);
 				switch (iErr)
 				{
-					case -1: throw new Exception("ошибка чтения");
+					case -1: throw new RfidException("ошибка чтения");
 					default:
 						return Convert.ToBoolean(iErr);
 				}
@@ -28,8 +28,8 @@ namespace InformSystema.RFID.IDLogic
 			{
 				switch (value ? Externals.EasSet((this as IItem).Id) : Externals.EasReset((this as IItem).Id))
 				{
-					case -1: throw new Exception("Ошибка записи (RFID-ридер недоступен)");
-					case 0: throw new Exception(value ? "Не удалось установить противокражный бит" : "Не удалось снять противокражный бит");
+					case -1: throw new RfidException("Ошибка записи (RFID-ридер недоступен)");
+					case 0: throw new RfidException(value ? "Не удалось установить противокражный бит" : "Не удалось снять противокражный бит");
 				}
 			}
 		}

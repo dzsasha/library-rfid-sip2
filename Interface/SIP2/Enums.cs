@@ -22,7 +22,7 @@ namespace InformSystema.Interface.SIP2
 		/// <summary>
 		/// Запрос состояния абонента
 		/// </summary>
-		scPatronStatusRequest = 23,
+		scPatronStatus = 23,
 		/// <summary>
 		/// Получение
 		/// </summary>
@@ -95,15 +95,15 @@ namespace InformSystema.Interface.SIP2
 		/// <summary>
 		/// Ответ о состоянии абонента
 		/// </summary>
-		acPatronStatusResponse = 24,
+		acPatronStatus = 24,
 		/// <summary>
 		/// Ответ о получении
 		/// </summary>
-		acCheckoutResponse = 12,
+		acCheckout = 12,
 		/// <summary>
 		/// Ответ о возврате
 		/// </summary>
-		acCheckinResponse = 10,
+		acCheckin = 10,
 		/// <summary>
 		/// Состояние ААС
 		/// </summary>
@@ -115,59 +115,62 @@ namespace InformSystema.Interface.SIP2
 		/// <summary>
 		/// Ответ о входе
 		/// </summary>
-		acLoginResponse = 94,
+		acLogin = 94,
 		/// <summary>
 		/// Ответ со сведениями об абоненте
 		/// </summary>
-		acPatronInformationResponse = 64,
+		acPatronInformation = 64,
 		/// <summary>
 		/// Ответ о завершении сеанса
 		/// </summary>
-		acEndSessionResponse = 36,
+		acEndSession = 36,
 		/// <summary>
 		/// Ответ об уплате взноса
 		/// </summary>
-		acFeePaidResponse = 38,
+		acFeePaid = 38,
 		/// <summary>
 		/// Ответ со сведениями о единице
 		/// </summary>
-		acItemInformationResponse = 18,
+		acItemInformation = 18,
 		/// <summary>
 		/// Ответ об обновлении состояния единицы
 		/// </summary>
-		acItemStatusUpdateResponse = 20,
+		acItemStatusUpdate = 20,
 		/// <summary>
 		/// Ответ об активации абонента
 		/// </summary>
-		acPatronEnableResponse = 26,
+		acPatronEnable = 26,
 		/// <summary>
 		/// Ответ об удержании
 		/// </summary>
-		acHoldResponse = 16,
+		acHold = 16,
 		/// <summary>
 		/// Ответ о возобновлении
 		/// </summary>
-		acRenewResponse = 30,
+		acRenew = 30,
 		/// <summary>
 		/// Ответ о возобновлении всего
 		/// </summary>
-		acRenewAllResponse = 66
+		acRenewAll = 66
 	}
 	/// <summary>
 	/// Версия SIP2-протокола
 	/// </summary>
-	[Guid("4AFA5E2E-786F-4CD3-B811-44A867DE2914")]
+	[Guid("4AFA5E2E-786F-4CD3-B811-44A867DE2913")]
 	[ComVisible(true)]
 	[DataContract(Namespace = "http://informsystema.com/marc/service/")]
+	[Serializable]
 	public enum Sip2Version
 	{
 		/// <summary>
 		/// Поддержка версии 1.00
 		/// </summary>
+		[EnumMember(Value = "1.00")]
 		V100 = 0x1,
 		/// <summary>
 		/// Поддержка версии 2.00
 		/// </summary>
+		[EnumMember(Value = "2.00")]
 		V200 = 0x2
 	}
 }

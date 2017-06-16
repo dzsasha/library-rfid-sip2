@@ -5,13 +5,16 @@ namespace InformSystema.SIP2.CS
 {
 	public partial class ServiceSip2 : ServiceBase
 	{
+		private Sip2Server _server = null;
 		public ServiceSip2(ServiceSection config)
 		{
+			_server = new Sip2Server(config);
 			InitializeComponent();
 		}
 
 		protected override void OnStart(string[] args)
 		{
+			_server.Listener();
 		}
 
 		protected override void OnStop()

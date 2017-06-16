@@ -26,7 +26,7 @@ namespace InformSystema.Interface.RFID
 					Add(modelImpl);
 				}
 			}
-			catch (RfidException ex)
+			catch (RfidException)
 			{
 			}
 		}

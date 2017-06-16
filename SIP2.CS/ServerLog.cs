@@ -13,7 +13,10 @@ namespace InformSystema.SIP2.CS
 	{
 		public ServerLog(ServiceSection config)
 		{
+			_server = new Sip2Server(config);
 			InitializeComponent();
 		}
+
+		private Sip2Server _server = null;
 	}
 }

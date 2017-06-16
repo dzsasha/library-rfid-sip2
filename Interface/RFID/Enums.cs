@@ -28,35 +28,6 @@ namespace InformSystema.Interface.RFID
 		Person = 2,
 	}
 	/// <summary>
-	/// Тип поля для меток
-	/// </summary>
-	[Guid("4AFA5E2E-786F-4CD3-B811-44A867DE2902")]
-	[ComVisible(true)]
-	[DataContract(Namespace = "http://informsystema.com/marc/service/")]
-	public enum TypeField
-	{
-		/// <summary>
-		/// Пустое поле
-		/// </summary>
-		[EnumMember]
-		Null,
-		/// <summary>
-		/// Целочисленное поле
-		/// </summary>
-		[EnumMember]
-		Integer,
-		/// <summary>
-		/// Строковое поле
-		/// </summary>
-		[EnumMember]
-		String,
-		/// <summary>
-		/// Логическое
-		/// </summary>
-		[EnumMember]
-		Boolean,
-	}
-	/// <summary>
 	/// Типы моделей данных
 	/// </summary>
 	[Guid("4AFA5E2E-786F-4CD3-B811-44A867DE2903")]

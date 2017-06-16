@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Enums.cs" />
     <Compile Include="RFID\Enums.cs" />
     <Compile Include="FieldImpl.cs" />
     <Compile Include="RFID\IItem.cs" />
@@ -55,19 +56,13 @@
     <Compile Include="RFID\IReader.cs" />
     <Compile Include="IField.cs" />
     <Compile Include="SIP2\Enums.cs" />
-    <Compile Include="SIP2\ISip2Checkin.cs" />
-    <Compile Include="SIP2\ISip2Checkout.cs" />
     <Compile Include="SIP2\ISip2Command.cs" />
-    <Compile Include="SIP2\ISip2Login.cs" />
-    <Compile Include="SIP2\ISip2PatronStatus.cs" />
     <Compile Include="RFID\ItemImpl.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="RFID\ModelConverter.cs" />
     <Compile Include="RFID\ModelImpl.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RFID\RfidException.cs" />
-    <Compile Include="SIP2\Sip2CommandAttribute.cs" />
-    <Compile Include="SIP2\Sip2FieldAttribute.cs" />
     <Compile Include="RFID\TypeModelImpl.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

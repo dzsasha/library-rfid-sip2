@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using InformSystema.Interface.RFID;
 
 namespace InformSystema.Interface
 {
