@@ -79,7 +79,7 @@ namespace InformSystema.SIP2.CS
 			get { return (ProtocolType)base["proto"]; }
 			set { base["port"] = value; }
 		}
-		[ConfigurationProperty("address", DefaultValue = null)]
+		[ConfigurationProperty("address", DefaultValue = "0.0.0.0")]
 		public string Address
 		{
 			get { return (string)base["address"]; }
@@ -90,6 +90,18 @@ namespace InformSystema.SIP2.CS
 		{
 			get { return Convert.ToBoolean(base["debug"]); }
 			set { base["debug"] = value; }
+		}
+		[ConfigurationProperty("max", DefaultValue = 5)]
+		public int MaxConnection
+		{
+			get { return (int) base["max"]; }
+			set { base["max"] = value; }
+		}
+		[ConfigurationProperty("separator", DefaultValue = '|')]
+		public Char Separator
+		{
+			get { return Convert.ToChar(base["separator"]); }
+			set { base["separator"] = value; }
 		}
 		public IField[] Params
 		{

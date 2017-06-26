@@ -25,17 +25,11 @@ namespace InformSystema.SIP2.CS
 				};
 				ServiceBase.Run(servicesToRun);
 			}
-			else if (args.Length > 0 && args[0] == "/server")
-			{
-				Application.EnableVisualStyles();
-				Application.SetCompatibleTextRenderingDefault(false);
-				Application.Run(new ServerLog((ServiceSection) ConfigurationManager.GetSection(ServiceSection.SectionName)));
-			}
 			else
 			{
 				Application.EnableVisualStyles();
 				Application.SetCompatibleTextRenderingDefault(false);
-				Application.Run(new ClientSIP());
+				Application.Run(new ServerLog((ServiceSection) ConfigurationManager.GetSection(ServiceSection.SectionName)));
 			}
 		}
 	}

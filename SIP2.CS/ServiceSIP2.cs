@@ -14,11 +14,12 @@ namespace InformSystema.SIP2.CS
 
 		protected override void OnStart(string[] args)
 		{
-			_server.Listener();
+			_server.Start();
 		}
 
 		protected override void OnStop()
 		{
+			_server.Stop();
 		}
 	}
 }

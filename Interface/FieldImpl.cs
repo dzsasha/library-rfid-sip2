@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace InformSystema.Interface
 {
 	/// <summary>
-	/// Класс имплементации интерфейса IItem
+	/// Класс имплементации интерфейса IField
 	/// </summary>
 	[DataContract(Name = "field", Namespace = "http://informsystema.com/marc/service/")]
 	[Serializable]
@@ -27,7 +27,7 @@ namespace InformSystema.Interface
 		[DataMember(Name = "type")]
 		public TypeField Type { get; set; }
 
-		private object _value  = null;
+		private object _value = null;
 		/// <summary>
 		/// Значение
 		/// </summary>
@@ -35,7 +35,7 @@ namespace InformSystema.Interface
 		public object Value { get { return _value; }
 			set
 			{
-				_value = value;
+				SetValue(value);
 				if (OnChange != null)
 				{
 					OnChange(this, new EventArgs());
@@ -46,6 +46,14 @@ namespace InformSystema.Interface
 		/// Событие изменения значения.
 		/// </summary>
 		public event EventHandler OnChange;
+
+		/// <summary>
+		/// Виртуальная функция для установки значения.
+		/// </summary>
+		public virtual void SetValue(object value)
+		{
+			_value = value;
+		}
 
 		#endregion
 	}

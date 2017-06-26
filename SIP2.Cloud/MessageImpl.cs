@@ -17,6 +17,7 @@ namespace InformSystema.SIP2.Cloud
 		public MessageImpl()
 		{
 			// TODO: Заполнение массива возможными коммандами
+			Add(new LoginImpl());
 		}
 		public bool Init(IField[] paramsFields)
 		{
