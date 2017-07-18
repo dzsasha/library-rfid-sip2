@@ -7,12 +7,12 @@ using System.Linq;
 using System.Runtime.Serialization.Json;
 using System.Text;
 
-namespace InformSystema.Interface.RFID
+namespace IS.Interface.RFID
 {
 	/// <summary>
 	/// Класс конвертор для модели метки
 	/// </summary>
-	public class ModelConverter : TypeConverter
+	public class ModelConverter<T> : TypeConverter
 	{
 		public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
 		{
@@ -34,9 +34,9 @@ namespace InformSystema.Interface.RFID
 			try
 			{
 				MemoryStream stream1 = new MemoryStream(Encoding.Unicode.GetBytes(value.ToString()));
-				DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(ModelImpl));
+				DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(T));
 				stream1.Position = 0;
-				return (ModelImpl)ser.ReadObject(stream1);
+				return (T)ser.ReadObject(stream1);
 			}
 			catch (Exception ex)
 			{

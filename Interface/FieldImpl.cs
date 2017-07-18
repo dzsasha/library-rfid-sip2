@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace InformSystema.Interface
+namespace IS.Interface
 {
 	/// <summary>
 	/// Класс имплементации интерфейса IField
@@ -46,7 +46,7 @@ namespace InformSystema.Interface
 		/// Событие изменения значения.
 		/// </summary>
 		public event EventHandler OnChange;
-
+		#endregion
 		/// <summary>
 		/// Виртуальная функция для установки значения.
 		/// </summary>
@@ -54,7 +54,13 @@ namespace InformSystema.Interface
 		{
 			_value = value;
 		}
-
-		#endregion
+		/// <summary>
+		/// Объект как строка
+		/// </summary>
+		/// <returns>строка</returns>
+		public override string ToString()
+		{
+			return Value.ToString();
+		}
 	}
 }

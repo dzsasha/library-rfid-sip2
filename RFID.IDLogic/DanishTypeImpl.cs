@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using InformSystema.Interface;
-using InformSystema.Interface.RFID;
+using IS.Interface;
+using IS.Interface.RFID;
 
-namespace InformSystema.RFID.IDLogic
+namespace IS.RFID.IDLogic
 {
 	public sealed class DanishTypeImpl : TypeModelImpl<DanishModelImpl>, ITypeModel
 	{
@@ -22,6 +22,7 @@ namespace InformSystema.RFID.IDLogic
 		{
 			if (Count == 0)
 			{
+				Log.For(this).Debug(String.Format("Model.id: {0}", item.Id));
 				base.Add(item);
 			}
 		}

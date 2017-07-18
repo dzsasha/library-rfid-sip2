@@ -8,7 +8,7 @@
     <ProjectGuid>{5BD23A89-0906-4DAF-84EA-349ECDB21CF5}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>InformSystema.SIP2.CS</RootNamespace>
+    <RootNamespace>IS.SIP2.CS</RootNamespace>
     <AssemblyName>IS.SIP2.CS</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>

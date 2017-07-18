@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
 
-namespace InformSystema.Interface.SIP2
+namespace IS.Interface.SIP2
 {
 	/// <summary>
 	/// Система SC отправляет в ААС следующие командные сообщения

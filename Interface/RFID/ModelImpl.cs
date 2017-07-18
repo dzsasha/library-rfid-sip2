@@ -4,14 +4,14 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.Serialization;
 
-namespace InformSystema.Interface.RFID
+namespace IS.Interface.RFID
 {
 	/// <summary>
 	/// Имплементация интерфейса IModel
 	/// </summary>
 	[DataContract(Name = "model", Namespace = "http://informsystema.com/marc/service/")]
 	[Serializable]
-	[TypeConverter(typeof(ModelConverter))]
+	[TypeConverter(typeof(ModelConverter<ModelImpl>))]
 	public class ModelImpl : IModel
 	{
 		/// <summary>

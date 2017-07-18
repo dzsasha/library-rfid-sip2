@@ -3,10 +3,10 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using InformSystema.Interface;
-using InformSystema.Interface.SIP2;
+using IS.Interface;
+using IS.Interface.SIP2;
 
-namespace InformSystema.SIP2.Cloud
+namespace IS.SIP2.Cloud
 {
 	[Guid("AEB3668D-B17A-40E7-8D44-BB1FE9813306")]
 	[ComVisible(true)]

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace InformSystema.Interface.RFID
+namespace IS.Interface.RFID
 {
 	/// <summary>
 	/// Имплементация интерфейса ITypeModel

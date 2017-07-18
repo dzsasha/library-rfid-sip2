@@ -1,7 +1,7 @@
 ﻿using System.Configuration;
 using System.ServiceProcess;
 
-namespace InformSystema.SIP2.CS
+namespace IS.SIP2.CS
 {
 	public partial class ServiceSip2 : ServiceBase
 	{

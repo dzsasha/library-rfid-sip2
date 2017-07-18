@@ -8,10 +8,10 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using InformSystema.Interface;
-using InformSystema.Interface.SIP2;
+using IS.Interface;
+using IS.Interface.SIP2;
 
-namespace InformSystema.SIP2.CS
+namespace IS.SIP2.CS
 {
 	public class Sip2Server : ISip2Answers, IDisposable
 	{

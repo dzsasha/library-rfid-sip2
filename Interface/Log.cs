@@ -3,7 +3,7 @@ using System.Reflection;
 using log4net.Config;
 using log4net;
 
-namespace InformSystema.Interface
+namespace IS.Interface
 {
 	/// <summary>
 	/// Класс логгирования

@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace InformSystema.SIP2.CS
+namespace IS.SIP2.CS
 {
 	public partial class ServerLog : Form
 	{

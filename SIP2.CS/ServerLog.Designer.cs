@@ -1,4 +1,4 @@
-﻿namespace InformSystema.SIP2.CS
+﻿namespace IS.SIP2.CS
 {
 	partial class ServerLog
 	{

@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace InformSystema.Interface.RFID
+namespace IS.Interface.RFID
 {
 	/// <summary>
 	/// Интерфейс метки

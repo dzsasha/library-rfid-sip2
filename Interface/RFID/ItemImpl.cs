@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace InformSystema.Interface.RFID
+namespace IS.Interface.RFID
 {
 	/// <summary>
 	/// Класс имплементации интерфейса IItem

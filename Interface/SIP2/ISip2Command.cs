@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Runtime.InteropServices;
 
-namespace InformSystema.Interface.SIP2
+namespace IS.Interface.SIP2
 {
 	/// <summary>
 	/// Интерфейс команд SIP2-протокола

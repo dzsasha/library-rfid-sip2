@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using InformSystema.Interface;
+using IS.Interface;
 
-namespace InformSystema.SIP2.Cloud
+namespace IS.SIP2.Cloud
 {
 	internal static class CoreExt
 	{

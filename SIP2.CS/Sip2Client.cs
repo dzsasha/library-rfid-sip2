@@ -6,7 +6,7 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 
-namespace InformSystema.SIP2.CS
+namespace IS.SIP2.CS
 {
 	public class Sip2Client
 	{

@@ -8,7 +8,7 @@ using System.Management;
 using System.Text;
 
 
-namespace InformSystema.RFID.CS
+namespace IS.RFID.CS
 {
 	[RunInstaller(true)]
 	public partial class ProjectInstaller : Installer

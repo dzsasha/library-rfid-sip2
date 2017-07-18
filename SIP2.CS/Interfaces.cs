@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using InformSystema.Interface;
-using InformSystema.Interface.SIP2;
+using IS.Interface;
+using IS.Interface.SIP2;
 
-namespace InformSystema.SIP2.CS
+namespace IS.SIP2.CS
 {
 	/// <summary>
 	/// Интерфейс полей SIP2-протокола

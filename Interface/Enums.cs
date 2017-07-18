@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
 
-namespace InformSystema.Interface
+namespace IS.Interface
 {
 	/// <summary>
 	/// Типы полей

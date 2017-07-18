@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
-using InformSystema.Interface.RFID;
+using IS.Interface.RFID;
 
-namespace InformSystema.RFID.IDLogic
+namespace IS.RFID.IDLogic
 {
 	/// <summary>
 	/// Имплементация считывателя карт читателя
 	/// </summary>
 	[Guid("8C7C7086-04C0-4AD6-A693-97C6F017FB64")]
 	[ComVisible(true)]
-	[ProgId("Marc.Mifare")]
+	[ProgId("RFID.Mifare")]
 	[ClassInterface(ClassInterfaceType.AutoDispatch)]
 	public class CardReaderImpl : ReaderImpl
 	{

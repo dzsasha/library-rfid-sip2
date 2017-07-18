@@ -7,10 +7,10 @@ using System.Net;
 using System.Runtime.Serialization;
 using System.ServiceModel.Web;
 using System.ServiceModel;
-using InformSystema.Interface;
-using InformSystema.Interface.RFID;
+using IS.Interface;
+using IS.Interface.RFID;
 
-namespace InformSystema.RFID.Service
+namespace IS.RFID.Service
 {
 	public class ReaderImpl : ConfigurationElement, IReader
 	{

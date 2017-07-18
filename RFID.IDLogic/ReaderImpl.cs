@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using InformSystema.Interface;
-using InformSystema.Interface.RFID;
+using IS.Interface;
+using IS.Interface.RFID;
 
-namespace InformSystema.RFID.IDLogic
+namespace IS.RFID.IDLogic
 {
 	/// <summary>
 	/// Общия класс считывателя
@@ -90,6 +90,10 @@ namespace InformSystema.RFID.IDLogic
 					if (uids.Length > 0 || uids != _sReaded)
 					{
 						items.AddRange(uids.Split(',').Select(GetItem));
+						if (uids != _sReaded)
+						{
+							Log.For(this).Debug(String.Format("Readed items: {0}", uids));
+						}
 						if (OnChange != null && uids != _sReaded)
 						{
 							OnChange(this, new EventArgs());

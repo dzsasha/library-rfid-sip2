@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Data.SqlClient;
 using System.Runtime.InteropServices;
-using InformSystema.Interface.RFID;
+using IS.Interface.RFID;
 
-namespace InformSystema.Interface
+namespace IS.Interface
 {
 	/// <summary>
 	/// Интерфейс поля метки

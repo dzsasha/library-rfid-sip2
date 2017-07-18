@@ -5,10 +5,10 @@ using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.ServiceProcess;
 using System.Windows.Forms;
-using InformSystema.Interface;
-using InformSystema.Interface.SIP2;
+using IS.Interface;
+using IS.Interface.SIP2;
 
-namespace InformSystema.SIP2.CS
+namespace IS.SIP2.CS
 {
 	static class Program
 	{

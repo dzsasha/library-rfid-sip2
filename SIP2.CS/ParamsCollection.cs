@@ -6,10 +6,10 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using InformSystema.Interface;
-using InformSystema.Interface.SIP2;
+using IS.Interface;
+using IS.Interface.SIP2;
 
-namespace InformSystema.SIP2.CS
+namespace IS.SIP2.CS
 {
 	public class ParamsCollection : ConfigurationElementCollection
 	{

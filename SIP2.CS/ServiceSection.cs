@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Configuration;
 
-namespace InformSystema.SIP2.CS
+namespace IS.SIP2.CS
 {
 	public class ServiceSection : ConfigurationSection
 	{

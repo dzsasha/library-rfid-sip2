@@ -7,10 +7,10 @@ using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.Configuration;
 using System.ServiceModel.Web;
-using InformSystema.Interface;
-using InformSystema.Interface.RFID;
+using IS.Interface;
+using IS.Interface.RFID;
 
-namespace InformSystema.RFID.Service
+namespace IS.RFID.Service
 {
 //	[ServiceBehavior(AddressFilterMode = AddressFilterMode.Any)]
 	[ServiceBehavior(Name = "Service", Namespace = "http://informsystema.com/marc/service/", AddressFilterMode = AddressFilterMode.Any, InstanceContextMode = InstanceContextMode.Single)]

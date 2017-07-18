@@ -5,10 +5,11 @@ using System.Web.Script.Serialization;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.ServiceModel.Web;
-using InformSystema.Interface;
-using InformSystema.Interface.RFID;
+using IS.Interface;
+using IS.Interface.RFID;
+using System.ServiceModel;
 
-namespace InformSystema.RFID.Service
+namespace IS.RFID.Service
 {
 	public partial class ServiceImpl : IServiceRfid
 	{
@@ -19,12 +20,20 @@ namespace InformSystema.RFID.Service
 		/// <returns>прочитанные метки</returns>
 		string[] IServiceRfid.GetItems()
 		{
-			List<string> lRet = new List<string>();
-			foreach (ReaderImpl reader in _readers)
+			try
 			{
-				lRet.AddRange((this as IServiceRfid).GetItemsFrom(reader.Name));
+				List<string> lRet = new List<string>();
+				foreach (ReaderImpl reader in _readers)
+				{
+					lRet.AddRange((this as IServiceRfid).GetItemsFrom(reader.Name));
+				}
+				return lRet.ToArray();
 			}
-			return lRet.ToArray();
+			catch (Exception ex)
+			{
+				Log.For(this).Error("ServiceImpl:GetItems() - {0}", ex);
+				throw new FaultException<ErrorImpl>(new ErrorImpl() { ErrorMessage = ex.Message }, new FaultReason(ex.Message));
+			}
 		}
 		/// <summary>
 		/// Получение списка устройств
@@ -32,8 +41,16 @@ namespace InformSystema.RFID.Service
 		/// <returns>список считывателей</returns>
 		string[] IServiceRfid.GetReaders()
 		{
-			(this as IServiceRfid).Options();
-			return _readers.Select(reader => reader.Name).ToArray();
+			try
+			{
+				(this as IServiceRfid).Options();
+				return _readers.Select(reader => reader.Name).ToArray();
+			}
+			catch (Exception ex)
+			{
+				Log.For(this).Error("ServiceImpl:GetReaders() - {0}", ex);
+				throw new FaultException<ErrorImpl>(new ErrorImpl() { ErrorMessage = ex.Message }, new FaultReason(ex.Message));
+			}
 		}
 		
 		/// <summary>
@@ -52,6 +69,7 @@ namespace InformSystema.RFID.Service
 			catch (Exception ex)
 			{
 				Log.For(this).Error(String.Format("ServiceImpl:GetItemsFrom - {0}", ex.Message));
+				throw new FaultException<ErrorImpl>(new ErrorImpl() { ErrorMessage = ex.Message }, new FaultReason(ex.Message));
 			}
 
 			return lRet.ToArray();
@@ -74,6 +92,7 @@ namespace InformSystema.RFID.Service
 				catch (Exception ex)
 				{
 					Log.For(this).Error(String.Format("ServiceImpl:GetEas - {0}", ex.Message));
+					throw new FaultException<ErrorImpl>(new ErrorImpl() { ErrorMessage = ex.Message }, new FaultReason(ex.Message));
 				}
 			}
 			return false;
@@ -96,6 +115,7 @@ namespace InformSystema.RFID.Service
 				catch (Exception ex)
 				{
 					Log.For(this).Error(String.Format("ServiceImpl:SetEas - {0}", ex.Message));
+					throw new FaultException<ErrorImpl>(new ErrorImpl() { ErrorMessage = ex.Message }, new FaultReason(ex.Message));
 				}
 			}
 		}
@@ -121,6 +141,7 @@ namespace InformSystema.RFID.Service
 				catch (Exception ex)
 				{
 					Log.For(this).Error(String.Format("ServiceImpl:GetModels - {0}", ex.Message));
+					throw new FaultException<ErrorImpl>(new ErrorImpl() { ErrorMessage = ex.Message }, new FaultReason(ex.Message));
 				}
 			}
 			return lRet.ToArray();
@@ -152,6 +173,7 @@ namespace InformSystema.RFID.Service
 				catch (Exception ex)
 				{
 					Log.For(this).Error(String.Format("ServiceImpl:GetDefault - {0}", ex.Message));
+					throw new FaultException<ErrorImpl>(new ErrorImpl() { ErrorMessage = ex.Message }, new FaultReason(ex.Message));
 				}
 			}
 			return pRet;
@@ -179,6 +201,7 @@ namespace InformSystema.RFID.Service
 				catch (Exception ex)
 				{
 					Log.For(this).Error(String.Format("ServiceImpl:GetTypeModels - {0}", ex.Message));
+					throw new FaultException<ErrorImpl>(new ErrorImpl() { ErrorMessage = ex.Message }, new FaultReason(ex.Message));
 				}
 			}
 			return lRet.ToArray();
@@ -198,25 +221,32 @@ namespace InformSystema.RFID.Service
 				IItem _item = GetItem(item);
 				if (_item != null && _item.IsItemModel())
 				{
-					foreach (ITypeModel typeModel in (_item as IItemModel).Models)
-					{
-						if (typeModel.Model == model.Model)
+					try {
+						foreach (ITypeModel typeModel in (_item as IItemModel).Models)
 						{
-							IModel addModel = typeModel.Default;
-							if (!typeModel.Any())
+							if (typeModel.Model == model.Model)
 							{
-								addModel.Id = model.Id;
-								addModel.Type = model.Type;
-								typeModel.Add(addModel);
-							}
-							else
-							{
-								addModel = typeModel.ElementAt(index);
-								addModel.Id = model.Id;
-								addModel.Type = model.Type;
-								addModel.Write();
+								IModel addModel = typeModel.Default;
+								if (!typeModel.Any())
+								{
+									addModel.Id = model.Id;
+									addModel.Type = model.Type;
+									typeModel.Add(addModel);
+								}
+								else
+								{
+									addModel = typeModel.ElementAt(index);
+									addModel.Id = model.Id;
+									addModel.Type = model.Type;
+									addModel.Write();
+								}
 							}
 						}
+					}
+					catch (Exception ex)
+					{
+						Log.For(this).Error(String.Format("ServiceImpl:WriteModel - {0}", ex.Message));
+						throw new FaultException<ErrorImpl>(new ErrorImpl() { ErrorMessage = ex.Message }, new FaultReason(ex.Message));
 					}
 				}
 			}

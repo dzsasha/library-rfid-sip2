@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
-using InformSystema.Interface.RFID;
+using IS.Interface.RFID;
 
-namespace InformSystema.RFID.Service
+namespace IS.RFID.Service
 {
 	public static class CoreExtended
 	{

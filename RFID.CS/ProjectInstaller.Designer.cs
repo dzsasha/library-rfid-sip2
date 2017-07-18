@@ -1,4 +1,4 @@
-﻿namespace InformSystema.RFID.CS
+﻿namespace IS.RFID.CS
 {
 	partial class ProjectInstaller
 	{

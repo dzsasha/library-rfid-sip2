@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using InformSystema.Interface.RFID;
+using IS.Interface.RFID;
 
-namespace InformSystema.RFID.IDLogic
+namespace IS.RFID.IDLogic
 {
 	public class ItemExImpl : ItemImpl, IItemEx
 	{

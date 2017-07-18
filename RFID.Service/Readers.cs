@@ -1,6 +1,6 @@
 ﻿using System.Configuration;
 
-namespace InformSystema.RFID.Service
+namespace IS.RFID.Service
 {
 	[ConfigurationCollection(typeof(ReaderImpl), AddItemName = "reader")]
 	public class Readers : ConfigurationElementCollection

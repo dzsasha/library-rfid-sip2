@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Configuration;
-using InformSystema.Interface;
-using InformSystema.Interface.RFID;
+using IS.Interface;
+using IS.Interface.RFID;
 
-namespace InformSystema.SIP2.CS
+namespace IS.SIP2.CS
 {
 	public class ParamElement : ConfigurationElement, IField
 	{

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using InformSystema.Interface.SIP2;
-using InformSystema.Interface;
+using IS.Interface.SIP2;
+using IS.Interface;
 
-namespace InformSystema.SIP2.CS
+namespace IS.SIP2.CS
 {
 	public class Sip2Cmd<T> : ISip2Cmd<T>
 	{

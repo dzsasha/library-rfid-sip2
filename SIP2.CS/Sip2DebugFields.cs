@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Data.Odbc;
 using System.Globalization;
-using InformSystema.Interface;
-using InformSystema.Interface.SIP2;
+using IS.Interface;
+using IS.Interface.SIP2;
 
-namespace InformSystema.SIP2.CS
+namespace IS.SIP2.CS
 {
 	/// <summary>
 	/// Поле последовательного номера

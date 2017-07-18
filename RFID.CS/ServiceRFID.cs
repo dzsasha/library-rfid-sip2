@@ -5,9 +5,9 @@ using System.ServiceProcess;
 using System.ServiceModel;
 using System.Threading;
 using System.Windows.Forms;
-using InformSystema.RFID.Service;
+using IS.RFID.Service;
 
-namespace InformSystema.RFID.CS
+namespace IS.RFID.CS
 {
 	public partial class ServiceRfid : ServiceBase
 	{

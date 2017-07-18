@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Marc.Service")]
+[assembly: AssemblyTitle("IS.RFID.Service")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Marc.Service")]
-[assembly: AssemblyCopyright("Copyright ©  2014")]
+[assembly: AssemblyProduct("IS.RFID")]
+[assembly: AssemblyCopyright("Copyright ©  1990")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

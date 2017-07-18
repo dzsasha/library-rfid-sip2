@@ -5,7 +5,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Windows.Forms;
 
-namespace InformSystema.SIP2.CS
+namespace IS.SIP2.CS
 {
 	
 	public class Sip2MessageEventArgs : EventArgs

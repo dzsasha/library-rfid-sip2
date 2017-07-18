@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace InformSystema.RFID.Service
+namespace IS.RFID.Service
 {
 	/// <summary>
 	/// Класс выдачи ошибки клиенту
@@ -13,7 +13,7 @@ namespace InformSystema.RFID.Service
 		/// <summary>
 		/// Строка ошибки
 		/// </summary>
-		[DataMember(Name = "error", IsRequired = true)]
+		[DataMember(Name = "message", IsRequired = true)]
 		public string ErrorMessage { get; set; }
 	}
 }

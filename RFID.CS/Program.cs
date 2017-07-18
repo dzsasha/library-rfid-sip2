@@ -5,7 +5,7 @@ using System.ServiceProcess;
 using System.Text;
 using System.Windows.Forms;
 
-namespace InformSystema.RFID.CS
+namespace IS.RFID.CS
 {
 	static class Program
 	{

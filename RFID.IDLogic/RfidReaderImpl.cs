@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using InformSystema.Interface.RFID;
+using IS.Interface.RFID;
 
-namespace InformSystema.RFID.IDLogic
+namespace IS.RFID.IDLogic
 {
 	/// <summary>
 	/// Имплементация RFID-считывателя

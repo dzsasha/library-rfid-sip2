@@ -2,9 +2,9 @@
 using System.Net;
 using System.ServiceModel;
 using System.ServiceModel.Web;
-using InformSystema.Interface.RFID;
+using IS.Interface.RFID;
 
-namespace InformSystema.RFID.Service
+namespace IS.RFID.Service
 {
 	/// <summary>
 	/// Интерфейс сервиса для работы с RFID-устройствами

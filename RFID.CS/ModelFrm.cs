@@ -1,10 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
-using InformSystema.Interface.RFID;
-using InformSystema.RFID.Service;
+using IS.Interface.RFID;
+using IS.RFID.Service;
 
-namespace InformSystema.RFID.CS
+namespace IS.RFID.CS
 {
 	public partial class ModelFrm : Form
 	{

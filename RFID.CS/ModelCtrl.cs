@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Windows.Forms;
-using InformSystema.Interface.RFID;
+using IS.Interface.RFID;
 
-namespace InformSystema.RFID.CS
+namespace IS.RFID.CS
 {
 	public partial class ModelCtrl : UserControl
 	{
