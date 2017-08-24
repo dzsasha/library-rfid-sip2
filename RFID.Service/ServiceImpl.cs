@@ -14,13 +14,13 @@ namespace IS.RFID.Service
 {
 //	[ServiceBehavior(AddressFilterMode = AddressFilterMode.Any)]
 	[ServiceBehavior(Name = "Service", Namespace = "http://informsystema.com/marc/service/", AddressFilterMode = AddressFilterMode.Any, InstanceContextMode = InstanceContextMode.Single)]
-	[KnownType(typeof(ErrorImpl))]
 	public partial class ServiceImpl : IDisposable
 	{
 		/// <summary>
 		/// Список реадеров
 		/// </summary>
 		private readonly List<ReaderImpl> _readers = new List<ReaderImpl>();
+		private List<IItem> _items = new List<IItem>();
 		/// <summary>
 		/// Конструктор по умолчанию
 		/// </summary>
@@ -37,7 +37,7 @@ namespace IS.RFID.Service
 		void reader_OnError(object sender, ErrorEventArgs error)
 		{
 			Log.For(sender).Error(error.GetException().Message);
-			throw new WebFaultException<ErrorImpl>(new ErrorImpl() { ErrorMessage = error.GetException().Message }, HttpStatusCode.OK);
+			throw new WebFaultException<String>(String.Format("{0} - {1}", "OnError", error.GetException().Message), HttpStatusCode.InternalServerError);
 		}
 		/// <summary>
 		/// Список реадеров в конфигурации
@@ -61,7 +61,7 @@ namespace IS.RFID.Service
 
 		private IItem GetItem(String item)
 		{
-			return (from reader in _readers from i in reader.Items where i.Id == item select i).FirstOrDefault();
+			return (from reader in _readers from i in _items where i.Id == item select i).FirstOrDefault();
 		}
 
 		/// <summary>

@@ -57,7 +57,6 @@ namespace IS.RFID.IDLogic
 					{
 						Parameters.Add(field);
 					}
-					_sReaded = Read();
 				}
 			}
 			catch (Exception ex)
@@ -76,6 +75,7 @@ namespace IS.RFID.IDLogic
 		public virtual void CloseReader()
 		{
 		}
+		private List<IItem> _items = new List<IItem>();
 		/// <summary>
 		/// Получить прочитанные метки
 		/// </summary>
@@ -83,13 +83,13 @@ namespace IS.RFID.IDLogic
 		{
 			get
 			{
-				List<IItem> items = new List<IItem>();
 				try
 				{
 					string uids = Read();
-					if (uids.Length > 0 || uids != _sReaded)
+					if (uids != _sReaded)
 					{
-						items.AddRange(uids.Split(',').Select(GetItem));
+						_items.Clear();
+						if (!String.IsNullOrEmpty(uids)) _items.AddRange(uids.Split(',').Select(GetItem));
 						if (uids != _sReaded)
 						{
 							Log.For(this).Debug(String.Format("Readed items: {0}", uids));
@@ -109,7 +109,7 @@ namespace IS.RFID.IDLogic
 					}
 					throw ex;
 				}
-				return items.ToArray();
+				return _items.ToArray();
 			}
 		}
 

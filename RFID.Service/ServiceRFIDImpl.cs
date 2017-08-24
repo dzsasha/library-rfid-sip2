@@ -8,6 +8,7 @@ using System.ServiceModel.Web;
 using IS.Interface;
 using IS.Interface.RFID;
 using System.ServiceModel;
+using System.Net;
 
 namespace IS.RFID.Service
 {
@@ -20,59 +21,21 @@ namespace IS.RFID.Service
 		/// <returns>прочитанные метки</returns>
 		string[] IServiceRfid.GetItems()
 		{
+			(this as IServiceRfid).Options();
 			try
 			{
-				List<string> lRet = new List<string>();
+				_items.Clear();
 				foreach (ReaderImpl reader in _readers)
 				{
-					lRet.AddRange((this as IServiceRfid).GetItemsFrom(reader.Name));
+					_items.AddRange(Readers[reader.Name].Items);
 				}
-				return lRet.ToArray();
 			}
 			catch (Exception ex)
 			{
 				Log.For(this).Error("ServiceImpl:GetItems() - {0}", ex);
-				throw new FaultException<ErrorImpl>(new ErrorImpl() { ErrorMessage = ex.Message }, new FaultReason(ex.Message));
+				throw new WebFaultException<String>(String.Format("{0} - {1}", "GetItems", ex.Message), HttpStatusCode.InternalServerError);
 			}
-		}
-		/// <summary>
-		/// Получение списка устройств
-		/// </summary>
-		/// <returns>список считывателей</returns>
-		string[] IServiceRfid.GetReaders()
-		{
-			try
-			{
-				(this as IServiceRfid).Options();
-				return _readers.Select(reader => reader.Name).ToArray();
-			}
-			catch (Exception ex)
-			{
-				Log.For(this).Error("ServiceImpl:GetReaders() - {0}", ex);
-				throw new FaultException<ErrorImpl>(new ErrorImpl() { ErrorMessage = ex.Message }, new FaultReason(ex.Message));
-			}
-		}
-		
-		/// <summary>
-		/// Получить прочитанные метки с устройства
-		/// </summary>
-		/// <param name="objectName">имя устройства</param>
-		/// <returns>прочитанные метки</returns>
-		string[] IServiceRfid.GetItemsFrom(string objectName)
-		{
-			(this as IServiceRfid).Options();
-			List<string> lRet = new List<string>();
-			try
-			{
-				lRet.AddRange(Readers[objectName].Items.Select(item => item.Id));
-			}
-			catch (Exception ex)
-			{
-				Log.For(this).Error(String.Format("ServiceImpl:GetItemsFrom - {0}", ex.Message));
-				throw new FaultException<ErrorImpl>(new ErrorImpl() { ErrorMessage = ex.Message }, new FaultReason(ex.Message));
-			}
-
-			return lRet.ToArray();
+			return _items.Select(item => item.Id).ToArray();
 		}
 		/// <summary>
 		/// Получить состояние противокражного бита
@@ -92,7 +55,7 @@ namespace IS.RFID.Service
 				catch (Exception ex)
 				{
 					Log.For(this).Error(String.Format("ServiceImpl:GetEas - {0}", ex.Message));
-					throw new FaultException<ErrorImpl>(new ErrorImpl() { ErrorMessage = ex.Message }, new FaultReason(ex.Message));
+					throw new WebFaultException<String>(String.Format("{0} - {1}", "GetEas", ex.Message), HttpStatusCode.InternalServerError);
 				}
 			}
 			return false;
@@ -115,7 +78,7 @@ namespace IS.RFID.Service
 				catch (Exception ex)
 				{
 					Log.For(this).Error(String.Format("ServiceImpl:SetEas - {0}", ex.Message));
-					throw new FaultException<ErrorImpl>(new ErrorImpl() { ErrorMessage = ex.Message }, new FaultReason(ex.Message));
+					throw new WebFaultException<String>(String.Format("{0} - {1}", "SetEas", ex.Message), HttpStatusCode.InternalServerError);
 				}
 			}
 		}
@@ -126,6 +89,7 @@ namespace IS.RFID.Service
 		/// <returns>данные модели</returns>
 		ModelImpl[] IServiceRfid.GetModels(string item)
 		{
+			long lTimer = Environment.TickCount;
 			(this as IServiceRfid).Options();
 			List<ModelImpl> lRet = new List<ModelImpl>();
 			if (item != null)
@@ -141,7 +105,7 @@ namespace IS.RFID.Service
 				catch (Exception ex)
 				{
 					Log.For(this).Error(String.Format("ServiceImpl:GetModels - {0}", ex.Message));
-					throw new FaultException<ErrorImpl>(new ErrorImpl() { ErrorMessage = ex.Message }, new FaultReason(ex.Message));
+					throw new WebFaultException<String>(String.Format("{0} - {1}", "GetModels", ex.Message), HttpStatusCode.InternalServerError);
 				}
 			}
 			return lRet.ToArray();
@@ -173,7 +137,7 @@ namespace IS.RFID.Service
 				catch (Exception ex)
 				{
 					Log.For(this).Error(String.Format("ServiceImpl:GetDefault - {0}", ex.Message));
-					throw new FaultException<ErrorImpl>(new ErrorImpl() { ErrorMessage = ex.Message }, new FaultReason(ex.Message));
+					throw new WebFaultException<String>(String.Format("{0} - {1}", "GetDefault", ex.Message), HttpStatusCode.InternalServerError);
 				}
 			}
 			return pRet;
@@ -186,6 +150,7 @@ namespace IS.RFID.Service
 		/// <returns>массив поддерживаемых типов данных н аметке</returns>
 		public TypeModel[] GetTypeModels(string item)
 		{
+			long lTimer = Environment.TickCount;
 			(this as IServiceRfid).Options();
 			List<TypeModel> lRet = new List<TypeModel>();
 			if (item != null)
@@ -201,7 +166,7 @@ namespace IS.RFID.Service
 				catch (Exception ex)
 				{
 					Log.For(this).Error(String.Format("ServiceImpl:GetTypeModels - {0}", ex.Message));
-					throw new FaultException<ErrorImpl>(new ErrorImpl() { ErrorMessage = ex.Message }, new FaultReason(ex.Message));
+					throw new WebFaultException<String>(String.Format("{0} - {1}", "GetTypeModels", ex.Message), HttpStatusCode.InternalServerError);
 				}
 			}
 			return lRet.ToArray();
@@ -240,13 +205,14 @@ namespace IS.RFID.Service
 									addModel.Type = model.Type;
 									addModel.Write();
 								}
+								Log.For(this).Debug(String.Format("ServiceImpl:WriteModel - {0}", addModel.Id));
 							}
 						}
 					}
 					catch (Exception ex)
 					{
 						Log.For(this).Error(String.Format("ServiceImpl:WriteModel - {0}", ex.Message));
-						throw new FaultException<ErrorImpl>(new ErrorImpl() { ErrorMessage = ex.Message }, new FaultReason(ex.Message));
+						throw new WebFaultException<String>(String.Format("{0} - {1}", "WriteModel", ex.Message), HttpStatusCode.InternalServerError);
 					}
 				}
 			}
@@ -259,7 +225,7 @@ namespace IS.RFID.Service
 				WebOperationContext.Current.OutgoingResponse.Headers.Add("Access-Control-Allow-Origin", "*");
 				WebOperationContext.Current.OutgoingResponse.Headers.Add("Access-Control-Allow-Headers", "Access-Control-Allow-Origin, Origin, X-Requested-With, Content-Type, Accept");
 				WebOperationContext.Current.OutgoingResponse.Headers.Add("Access-Control-Allow-Methods", "OPTIONS, POST, GET");
-				WebOperationContext.Current.OutgoingResponse.Headers.Add("Access-Control-Allow-Credentials", "false");
+				WebOperationContext.Current.OutgoingResponse.Headers.Add("Access-Control-Allow-Credentials", "true");
 			}
 		}
 

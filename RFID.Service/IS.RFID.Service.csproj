@@ -68,7 +68,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CoreExtended.cs" />
-    <Compile Include="ErrorImpl.cs" />
     <Compile Include="IServiceRfid.cs" />
     <Compile Include="ParamElement.cs" />
     <Compile Include="ParamsCollection.cs" />
