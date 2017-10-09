@@ -22,7 +22,6 @@ namespace IS.RFID.Service
 		[WebGet(UriTemplate = "GetItems")]
 		[return: MessageParameter(Name = "result")]
 		string[] GetItems();
-<<<<<<< HEAD
         /// <summary>
         /// Метка пришла из этого сервиса?
         /// </summary>
@@ -32,8 +31,6 @@ namespace IS.RFID.Service
         [WebInvoke(Method = "POST", UriTemplate = "IsItem")]
         [return: MessageParameter(Name = "result")]
         bool IsItem(string item);
-=======
->>>>>>> c98aac993646d9ea9acf4b796036a67558f56eb0
 		/// <summary>
 		/// Получить состояние противокражного бита
 		/// </summary>

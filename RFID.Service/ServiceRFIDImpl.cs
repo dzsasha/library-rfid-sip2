@@ -37,7 +37,6 @@ namespace IS.RFID.Service
 			}
 			return _items.Select(item => item.Id).ToArray();
 		}
-<<<<<<< HEAD
         /// <summary>
         /// Метка пришла из этого сервиса?
         /// </summary>
@@ -67,14 +66,6 @@ namespace IS.RFID.Service
         /// <param name="item">метка</param>
         /// <returns>противиокражный бит</returns>
         bool IServiceRfid.GetEas(string item)
-=======
-		/// <summary>
-		/// Получить состояние противокражного бита
-		/// </summary>
-		/// <param name="item">метка</param>
-		/// <returns>противиокражный бит</returns>
-		bool IServiceRfid.GetEas(string item)
->>>>>>> c98aac993646d9ea9acf4b796036a67558f56eb0
 		{
 			(this as IServiceRfid).Options();
 			if (item != null)
@@ -163,19 +154,11 @@ namespace IS.RFID.Service
 						pRet = new ModelImpl(typeModel) { Id = model.Default.Id, Type = model.Default.Type };
 					}
 				}
-<<<<<<< HEAD
 			}
 			catch (Exception ex)
 			{
 				Log.For(this).Error(String.Format("ServiceImpl:GetDefault - {0}", ex.Message));
 				throw new WebFaultException<String>(String.Format("{0} - {1}", "GetDefault", ex.Message), HttpStatusCode.InternalServerError);
-=======
-				catch (Exception ex)
-				{
-					Log.For(this).Error(String.Format("ServiceImpl:GetDefault - {0}", ex.Message));
-					throw new WebFaultException<String>(String.Format("{0} - {1}", "GetDefault", ex.Message), HttpStatusCode.InternalServerError);
-				}
->>>>>>> c98aac993646d9ea9acf4b796036a67558f56eb0
 			}
 			return pRet;
 		}
@@ -187,7 +170,6 @@ namespace IS.RFID.Service
 		/// <returns>массив поддерживаемых типов данных н аметке</returns>
 		public TypeModel[] GetTypeModels(string item)
 		{
-			long lTimer = Environment.TickCount;
 			(this as IServiceRfid).Options();
 			List<TypeModel> lRet = new List<TypeModel>();
 			if (item != null)
@@ -237,19 +219,8 @@ namespace IS.RFID.Service
 								{
 									typeModel.Add(addModel);
 								}
-<<<<<<< HEAD
                                 addModel.Write();
                                 Log.For(this).Debug(String.Format("ServiceImpl:WriteModel - {0}", addModel.Id));
-=======
-								else
-								{
-									addModel = typeModel.ElementAt(index);
-									addModel.Id = model.Id;
-									addModel.Type = model.Type;
-									addModel.Write();
-								}
-								Log.For(this).Debug(String.Format("ServiceImpl:WriteModel - {0}", addModel.Id));
->>>>>>> c98aac993646d9ea9acf4b796036a67558f56eb0
 							}
 						}
 					}
@@ -269,7 +240,7 @@ namespace IS.RFID.Service
 				WebOperationContext.Current.OutgoingResponse.Headers.Add("Access-Control-Allow-Origin", "*");
 				WebOperationContext.Current.OutgoingResponse.Headers.Add("Access-Control-Allow-Headers", "Access-Control-Allow-Origin, Origin, X-Requested-With, Content-Type, Accept");
 				WebOperationContext.Current.OutgoingResponse.Headers.Add("Access-Control-Allow-Methods", "OPTIONS, POST, GET");
-				WebOperationContext.Current.OutgoingResponse.Headers.Add("Access-Control-Allow-Credentials", "true");
+				WebOperationContext.Current.OutgoingResponse.Headers.Add("Access-Control-Allow-Credentials", "false");
 			}
 		}
 

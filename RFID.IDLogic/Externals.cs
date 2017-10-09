@@ -74,7 +74,11 @@ namespace IS.RFID.IDLogic
         {
             lock (objLock)
             {
+                StringBuilder sb = new StringBuilder(1025);
+                _RfidDM15Read(Id, sb);
+                RfidReadData();
                 _RfidDM15Write(Id, model.ToString());
+                RfidReadData();
             }
         }
     }
