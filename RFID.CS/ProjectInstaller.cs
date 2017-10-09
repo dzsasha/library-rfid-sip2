@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using System.ComponentModel;
 using System.Configuration.Install;
-using System.Linq;
-using System.Management;
 using System.Text;
-
 
 namespace IS.RFID.CS
 {
@@ -30,5 +25,6 @@ namespace IS.RFID.CS
 			Context.Parameters["assemblypath"] = path.ToString();
 			base.OnBeforeInstall(savedState);
 		}
-	}
+
+    }
 }

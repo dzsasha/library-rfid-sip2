@@ -13,12 +13,14 @@ namespace IS.RFID.CS
 			InitializeComponent();
 			foreach (ReaderImpl reader in ServiceImpl.Readers)
 			{
-				reader.InitReader(reader.Params);
-				reader.OnError += new ErrorEventHandler(reader_OnError);
-				TabPage tabPage = new TabPage(reader.Name);
-				tabPage.Controls.Add(new TypeCtrl(reader as IReader) { Dock = DockStyle.Fill });
-				tabControl.TabPages.Add(tabPage);
-			}
+                if (reader.InitReader(reader.Params))
+                {
+                    reader.OnError += new ErrorEventHandler(reader_OnError);
+                    TabPage tabPage = new TabPage(reader.Name);
+                    tabPage.Controls.Add(new TypeCtrl(reader as IReader) { Dock = DockStyle.Fill });
+                    tabControl.TabPages.Add(tabPage);
+                }
+            }
 		}
 
 		void reader_OnError(object sender, ErrorEventArgs e)

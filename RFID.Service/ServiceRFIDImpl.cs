@@ -8,6 +8,7 @@ using System.ServiceModel.Web;
 using IS.Interface;
 using IS.Interface.RFID;
 using System.ServiceModel;
+using System.Net;
 
 namespace IS.RFID.Service
 {
@@ -20,66 +21,51 @@ namespace IS.RFID.Service
 		/// <returns>прочитанные метки</returns>
 		string[] IServiceRfid.GetItems()
 		{
+			(this as IServiceRfid).Options();
 			try
 			{
-				List<string> lRet = new List<string>();
+				_items.Clear();
 				foreach (ReaderImpl reader in _readers)
 				{
-					lRet.AddRange((this as IServiceRfid).GetItemsFrom(reader.Name));
+					_items.AddRange(Readers[reader.Name].Items);
 				}
-				return lRet.ToArray();
 			}
 			catch (Exception ex)
 			{
 				Log.For(this).Error("ServiceImpl:GetItems() - {0}", ex);
-				throw new FaultException<ErrorImpl>(new ErrorImpl() { ErrorMessage = ex.Message }, new FaultReason(ex.Message));
+				throw new WebFaultException<String>(String.Format("{0} - {1}", "GetItems", ex.Message), HttpStatusCode.InternalServerError);
 			}
+			return _items.Select(item => item.Id).ToArray();
 		}
-		/// <summary>
-		/// Получение списка устройств
-		/// </summary>
-		/// <returns>список считывателей</returns>
-		string[] IServiceRfid.GetReaders()
-		{
-			try
-			{
-				(this as IServiceRfid).Options();
-				return _readers.Select(reader => reader.Name).ToArray();
-			}
-			catch (Exception ex)
-			{
-				Log.For(this).Error("ServiceImpl:GetReaders() - {0}", ex);
-				throw new FaultException<ErrorImpl>(new ErrorImpl() { ErrorMessage = ex.Message }, new FaultReason(ex.Message));
-			}
-		}
-		
-		/// <summary>
-		/// Получить прочитанные метки с устройства
-		/// </summary>
-		/// <param name="objectName">имя устройства</param>
-		/// <returns>прочитанные метки</returns>
-		string[] IServiceRfid.GetItemsFrom(string objectName)
-		{
-			(this as IServiceRfid).Options();
-			List<string> lRet = new List<string>();
-			try
-			{
-				lRet.AddRange(Readers[objectName].Items.Select(item => item.Id));
-			}
-			catch (Exception ex)
-			{
-				Log.For(this).Error(String.Format("ServiceImpl:GetItemsFrom - {0}", ex.Message));
-				throw new FaultException<ErrorImpl>(new ErrorImpl() { ErrorMessage = ex.Message }, new FaultReason(ex.Message));
-			}
-
-			return lRet.ToArray();
-		}
-		/// <summary>
-		/// Получить состояние противокражного бита
-		/// </summary>
-		/// <param name="item">метка</param>
-		/// <returns>противиокражный бит</returns>
-		bool IServiceRfid.GetEas(string item)
+        /// <summary>
+        /// Метка пришла из этого сервиса?
+        /// </summary>
+        /// <param name="item">метка</param>
+        /// <returns>успешность</returns>
+        bool IServiceRfid.IsItem(string item)
+        {
+            (this as IServiceRfid).Options();
+            if (item != null)
+            {
+                try
+                {
+                    IItem _item = GetItem(item);
+                    return _item != null;
+                }
+                catch (Exception ex)
+                {
+                    Log.For(this).Error(String.Format("ServiceImpl:IsItem - {0}", ex.Message));
+                    throw new WebFaultException<String>(String.Format("{0} - {1}", "IsItem", ex.Message), HttpStatusCode.InternalServerError);
+                }
+            }
+            return false;
+        }
+        /// <summary>
+        /// Получить состояние противокражного бита
+        /// </summary>
+        /// <param name="item">метка</param>
+        /// <returns>противиокражный бит</returns>
+        bool IServiceRfid.GetEas(string item)
 		{
 			(this as IServiceRfid).Options();
 			if (item != null)
@@ -92,7 +78,7 @@ namespace IS.RFID.Service
 				catch (Exception ex)
 				{
 					Log.For(this).Error(String.Format("ServiceImpl:GetEas - {0}", ex.Message));
-					throw new FaultException<ErrorImpl>(new ErrorImpl() { ErrorMessage = ex.Message }, new FaultReason(ex.Message));
+					throw new WebFaultException<String>(String.Format("{0} - {1}", "GetEas", ex.Message), HttpStatusCode.InternalServerError);
 				}
 			}
 			return false;
@@ -115,7 +101,7 @@ namespace IS.RFID.Service
 				catch (Exception ex)
 				{
 					Log.For(this).Error(String.Format("ServiceImpl:SetEas - {0}", ex.Message));
-					throw new FaultException<ErrorImpl>(new ErrorImpl() { ErrorMessage = ex.Message }, new FaultReason(ex.Message));
+					throw new WebFaultException<String>(String.Format("{0} - {1}", "SetEas", ex.Message), HttpStatusCode.InternalServerError);
 				}
 			}
 		}
@@ -126,6 +112,7 @@ namespace IS.RFID.Service
 		/// <returns>данные модели</returns>
 		ModelImpl[] IServiceRfid.GetModels(string item)
 		{
+			long lTimer = Environment.TickCount;
 			(this as IServiceRfid).Options();
 			List<ModelImpl> lRet = new List<ModelImpl>();
 			if (item != null)
@@ -135,13 +122,13 @@ namespace IS.RFID.Service
 					IItem _item = GetItem(item);
 					if (_item != null && _item.IsItemModel())
 					{
-						lRet.AddRange(from typeModel in (_item as IItemModel).Models from model in typeModel select new ModelImpl(model.Model) {Id = model.Id, Type = model.Type});
+						lRet.AddRange(from typeModel in (_item as IItemModel).Models from model in typeModel select new ModelImpl(model.Model) { Id = model.Id, Type = model.Type });
 					}
 				}
 				catch (Exception ex)
 				{
 					Log.For(this).Error(String.Format("ServiceImpl:GetModels - {0}", ex.Message));
-					throw new FaultException<ErrorImpl>(new ErrorImpl() { ErrorMessage = ex.Message }, new FaultReason(ex.Message));
+					throw new WebFaultException<String>(String.Format("{0} - {1}", "GetModels", ex.Message), HttpStatusCode.InternalServerError);
 				}
 			}
 			return lRet.ToArray();
@@ -157,24 +144,21 @@ namespace IS.RFID.Service
 		{
 			(this as IServiceRfid).Options();
 			ModelImpl pRet = null;
-			if (typeModel != null)
+			try
 			{
-				try
+				IItem _item = GetItem(item);
+				if (_item != null && _item.IsItemModel())
 				{
-					IItem _item = GetItem(item);
-					if (_item != null && _item.IsItemModel())
+					foreach (ITypeModel model in (_item as IItemModel).Models.Where(model => model.Model == typeModel))
 					{
-						foreach (ITypeModel model in (_item as IItemModel).Models.Where(model => model.Model == typeModel))
-						{
-							pRet = new ModelImpl(typeModel) { Id = model.Default.Id, Type = model.Default .Type};
-						}
+						pRet = new ModelImpl(typeModel) { Id = model.Default.Id, Type = model.Default.Type };
 					}
 				}
-				catch (Exception ex)
-				{
-					Log.For(this).Error(String.Format("ServiceImpl:GetDefault - {0}", ex.Message));
-					throw new FaultException<ErrorImpl>(new ErrorImpl() { ErrorMessage = ex.Message }, new FaultReason(ex.Message));
-				}
+			}
+			catch (Exception ex)
+			{
+				Log.For(this).Error(String.Format("ServiceImpl:GetDefault - {0}", ex.Message));
+				throw new WebFaultException<String>(String.Format("{0} - {1}", "GetDefault", ex.Message), HttpStatusCode.InternalServerError);
 			}
 			return pRet;
 		}
@@ -197,11 +181,12 @@ namespace IS.RFID.Service
 					{
 						lRet.AddRange((_item as IItemModel).Models.Select(model => model.Model));
 					}
+					Log.For(this).Debug(String.Format("ServiceImpl:GetTypeModels - {0}", lRet.Count));
 				}
 				catch (Exception ex)
 				{
 					Log.For(this).Error(String.Format("ServiceImpl:GetTypeModels - {0}", ex.Message));
-					throw new FaultException<ErrorImpl>(new ErrorImpl() { ErrorMessage = ex.Message }, new FaultReason(ex.Message));
+					throw new WebFaultException<String>(String.Format("{0} - {1}", "GetTypeModels", ex.Message), HttpStatusCode.InternalServerError);
 				}
 			}
 			return lRet.ToArray();
@@ -221,32 +206,28 @@ namespace IS.RFID.Service
 				IItem _item = GetItem(item);
 				if (_item != null && _item.IsItemModel())
 				{
-					try {
+					try
+					{
 						foreach (ITypeModel typeModel in (_item as IItemModel).Models)
 						{
 							if (typeModel.Model == model.Model)
 							{
 								IModel addModel = typeModel.Default;
-								if (!typeModel.Any())
+                                addModel.Id = model.Id;
+                                addModel.Type = model.Type;
+                                if (!typeModel.Any())
 								{
-									addModel.Id = model.Id;
-									addModel.Type = model.Type;
 									typeModel.Add(addModel);
 								}
-								else
-								{
-									addModel = typeModel.ElementAt(index);
-									addModel.Id = model.Id;
-									addModel.Type = model.Type;
-									addModel.Write();
-								}
+                                addModel.Write();
+                                Log.For(this).Debug(String.Format("ServiceImpl:WriteModel - {0}", addModel.Id));
 							}
 						}
 					}
 					catch (Exception ex)
 					{
 						Log.For(this).Error(String.Format("ServiceImpl:WriteModel - {0}", ex.Message));
-						throw new FaultException<ErrorImpl>(new ErrorImpl() { ErrorMessage = ex.Message }, new FaultReason(ex.Message));
+						throw new WebFaultException<String>(String.Format("{0} - {1}", "WriteModel", ex.Message), HttpStatusCode.InternalServerError);
 					}
 				}
 			}

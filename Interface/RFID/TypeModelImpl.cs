@@ -10,26 +10,30 @@ namespace IS.Interface.RFID
 	/// <typeparam name="T"></typeparam>
 	public class TypeModelImpl<T> : Collection<IModel>, ITypeModel where T : ModelImpl, new()
 	{
-		/// <summary>
-		/// Констурктор по умолчанию
-		/// </summary>
-		/// <param name="modelModel">Тип модели</param>
-		/// <param name="id">идентификатор метки</param>
-		public TypeModelImpl(TypeModel modelModel, string id)
+        /// <summary>
+        /// Констурктор по умолчанию
+        /// </summary>
+        /// <param name="modelModel">Тип модели</param>
+        /// <param name="id">идентификатор метки</param>
+        /// <param name="UseRead">читать метки</param>
+        public TypeModelImpl(TypeModel modelModel, string id, bool UseRead = true)
 		{
 			_id = id;
 			Model = modelModel;
-			try
-			{
-				foreach (ModelImpl modelImpl in (new T() { Model = modelModel }).Read(id))
-				{
-					Add(modelImpl);
-				}
-			}
-			catch (RfidException)
-			{
-			}
-		}
+            if (UseRead)
+            {
+                try
+                {
+                    foreach (ModelImpl modelImpl in (new T() { Model = modelModel }).Read(id))
+                    {
+                        Add(modelImpl);
+                    }
+                }
+                catch (RfidException)
+                {
+                }
+            }
+        }
 		/// <summary>
 		/// Идентификатор метки
 		/// </summary>

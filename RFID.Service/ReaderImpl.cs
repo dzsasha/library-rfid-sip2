@@ -17,11 +17,14 @@ namespace IS.RFID.Service
 		/// <summary>
 		/// Конструктор по умолчанию
 		/// </summary>
-		public ReaderImpl() { }
-		/// <summary>
-		/// Имя объекта для создания
-		/// </summary>
-		[ConfigurationProperty("object", IsKey = true, IsRequired = true, DefaultValue = "RFID.IDLogic")]
+		public ReaderImpl()
+        {
+            Log.For(this).Debug(String.Format("ReaderImpl name: {0}", Name));
+        }
+        /// <summary>
+        /// Имя объекта для создания
+        /// </summary>
+        [ConfigurationProperty("object", IsKey = true, IsRequired = true, DefaultValue = "RFID.IDLogic")]
 		public string Name
 		{
 			get { return ((string)(base["object"])); }
@@ -44,7 +47,11 @@ namespace IS.RFID.Service
 			}
 		}
 
-		public Type GetReaderType() { return Type.GetTypeFromProgID(Name); }
+		public Type GetReaderType()
+        {
+            Log.For(this).Debug(String.Format("GetReaderType type ({0}): {1}", Name, Type.GetTypeFromProgID(Name)));
+            return Type.GetTypeFromProgID(Name);
+        }
 
 		#region Поддерживаемые интрефейсы
 		/// <summary>
@@ -61,8 +68,10 @@ namespace IS.RFID.Service
 		/// <returns>успешность открытия реадера</returns>
 		public bool InitReader(IField[] param)
 		{
-			Reader = (IReader)Activator.CreateInstance(GetReaderType());
-			return (Reader != null) && Reader.InitReader(param);
+            Log.For(this).Debug(String.Format("InitReader: ", GetReaderType()));
+            Type readerType = GetReaderType();
+            Reader = (readerType != null) ? (IReader)Activator.CreateInstance(readerType) : null;
+            return (Reader != null) && Reader.InitReader(param);
 		}
 
 		/// <summary>
@@ -70,7 +79,8 @@ namespace IS.RFID.Service
 		/// </summary>
 		public void CloseReader()
 		{
-			if (Reader != null) Reader.CloseReader();
+            Log.For(this).Debug("CloseReader");
+            if (Reader != null) Reader.CloseReader();
 		}
 		/// <summary>
 		/// Получить прочитанные метки

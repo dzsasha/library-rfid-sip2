@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using IS.Interface;
 using IS.Interface.RFID;
@@ -19,8 +20,20 @@ namespace IS.RFID.IDLogic
 			_fields.Add(new FieldImpl() { Name = "CountryLibrary", Type = TypeField.String, Value = "" });
 			_fields.Add(new FieldImpl() { Name = "ISIL", Type = TypeField.String, Value = "" });
 		}
+        public DanishModelImpl(string id, string dm) : base(TypeModel.Danish)
+        {
+            _id = id;
+            IsInited = true;
+            _fields.Add(new FieldImpl() { Name = "PartsinItem", Type = TypeField.String, Value = dm.Split(';')[1] });
+            _fields.Add(new FieldImpl() { Name = "PartNumber", Type = TypeField.String, Value = dm.Split(';')[2] });
+            _fields.Add(new FieldImpl() { Name = "PrimaryItemId", Type = TypeField.String, Value = dm.Split(';')[3] });
+            _fields.Add(new FieldImpl() { Name = "CountryLibrary", Type = TypeField.String, Value = dm.Split(';')[4] });
+            _fields.Add(new FieldImpl() { Name = "ISIL", Type = TypeField.String, Value = dm.Split(';')[5] });
+            Type = StringToType(dm.Split(';')[0]);
+        }
+        private string _id { get; set; }
 
-		internal IField GetField(string name)
+        internal IField GetField(string name)
 		{
 			return _fields.FirstOrDefault(field => field.Name.Equals(name));
 		}
@@ -28,13 +41,14 @@ namespace IS.RFID.IDLogic
 		internal static DanishModelImpl Default(string id, IEnumerable<IField> param)
 		{
 			DanishModelImpl pRet = new DanishModelImpl() {Id = id, Type =  TypeItem.Item, IsInited = false};
+            pRet._id = id;
 			(pRet as ModelImpl).Id = id;
 			foreach (IField field in param)
 			{
 				switch (field.Name)
 				{
 					case "Country":
-						pRet.SCountryLibrary =field.Value.ToString();
+						pRet.SCountryLibrary = field.Value.ToString();
 						break;
 					case "ISIL":
 						pRet.SIsil = field.Value.ToString();
@@ -42,12 +56,6 @@ namespace IS.RFID.IDLogic
 				}
 			}
 			return pRet;
-		}
-
-		public override ModelImpl[] Read(string id)
-		{
-			(this as ModelImpl).Id = id;
-			return (new List<ModelImpl> {Externals.ReadModel(id, this)}).ToArray();
 		}
 
 		/// <summary>
@@ -85,17 +93,12 @@ namespace IS.RFID.IDLogic
 		#region implementation interface IModelEx
 		public new string Id
 		{
-			get { return SPrimaryItemId; }
-			set { SPrimaryItemId = value; }
-		}
-		public override void Write()
+            get { return GetField("PrimaryItemId").Value.ToString(); }
+            set { GetField("PrimaryItemId").Value = value; }
+        }
+        public override void Write()
 		{
-			if (!IsInited)
-			{
-				if (Type == TypeItem.Person) Externals.UserCardInit((this as ModelImpl).Id);
-				else if (Type == TypeItem.Item) Externals.BookLabelInit((this as ModelImpl).Id);
-			}
-			Externals.WriteModel((this as ModelImpl).Id, this);
+			Externals.WriteModel(_id, this);
 		}
 		#endregion
 
@@ -108,7 +111,6 @@ namespace IS.RFID.IDLogic
 		#endregion
 
 		#region For external
-
 		internal string STypeUsage
 		{
 			get { return TypeToString(Type); }
@@ -127,11 +129,6 @@ namespace IS.RFID.IDLogic
 			set { GetField("PartNumber").Value = value; }
 		}
 
-		internal string SPrimaryItemId
-		{
-			get { return GetField("PrimaryItemId").Value.ToString(); }
-			set { GetField("PrimaryItemId").Value = value; }
-		}
 		internal string SCountryLibrary
 		{
 			get { return GetField("CountryLibrary").Value.ToString(); }
@@ -144,6 +141,11 @@ namespace IS.RFID.IDLogic
 		}
 		internal Boolean IsInited { get; set; }
 
-		#endregion
-	}
+        #endregion
+
+        public override string ToString()
+        {
+            return String.Format("{0};{1};{2};{3};{4};{5}", TypeToString(Type), SPartsinItem, SPartNumber, Id, SCountryLibrary, SIsil);
+        }
+    }
 }

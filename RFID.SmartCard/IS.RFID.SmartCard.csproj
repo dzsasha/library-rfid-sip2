@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{7BF70B72-D229-4A77-8687-34D62FC11C50}</ProjectGuid>
+    <ProjectGuid>{4B59CDA6-18B4-4DA2-A88D-4E1F69547259}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>IS.RFID.IDLogic</RootNamespace>
-    <AssemblyName>IS.RFID.IDLogic</AssemblyName>
+    <RootNamespace>IS.RFID.SmartCard</RootNamespace>
+    <AssemblyName>IS.RFID.SmartCard</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <OutputPath>..\$(Configuration)\</OutputPath>
@@ -24,7 +24,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
@@ -51,11 +51,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DanishModelImpl.cs" />
-    <Compile Include="DanishTypeImpl.cs" />
-    <Compile Include="Externals.cs" />
-    <Compile Include="ItemExImpl.cs" />
-    <Compile Include="ReaderImpl.cs" />
+    <Compile Include="delegates.cs" />
+    <Compile Include="External.cs" />
+    <Compile Include="SmartCardsImpl.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

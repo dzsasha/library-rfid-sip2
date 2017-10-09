@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" InitialTargets="EnsureWixToolsetInstalled" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\WiX.4.0.0.5512-pre\build\wix.props" Condition="Exists('..\packages\WiX.4.0.0.5512-pre\build\wix.props')" />
+  <PropertyGroup>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>3.9</ProductVersion>
+    <ProjectGuid>31238bc4-f017-4711-886c-0c753b150d94</ProjectGuid>
+    <SchemaVersion>2.0</SchemaVersion>
+    <OutputName>marc.cloud.rfid</OutputName>
+    <OutputType>Package</OutputType>
+    <Name>IS.RFID.Setup</Name>
+    <OutputPath>..\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>..\$(Configuration)\</IntermediateOutputPath>
+    <Cultures>ru-RU</Cultures>
+    <DefineConstants>Directory=$(IntermediateOutputPath);</DefineConstants>
+    <EnableProjectHarvesting>True</EnableProjectHarvesting>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <WixToolPath>$(WixInstallPath)</WixToolPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="cloud.rfid.wxs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="IS.wxi" />
+    <Content Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="IS.ru-ru.wxl" />
+  </ItemGroup>
+  <ItemGroup>
+    <WixExtension Include="WixNetFxExtension">
+      <HintPath>$(WixInstallPath)\WixNetFxExtension.dll</HintPath>
+      <Name>WixNetFxExtension</Name>
+    </WixExtension>
+    <WixExtension Include="WixUIExtension">
+      <HintPath>$(WixInstallPath)\WixUIExtension.dll</HintPath>
+      <Name>WixNetFxExtension</Name>
+    </WixExtension>
+    <HarvestFile Include="$(IntermediateOutputPath)\log4net.dll">
+      <Link>Output\log4net.dll</Link>
+      <ComponentGroupName>IS.Interface.Log</ComponentGroupName>
+      <DirectoryRefId>INSTALLFOLDER</DirectoryRefId>
+      <PreprocessorVariable>var.IS.Interface.TargetDir</PreprocessorVariable>
+      <SuppressRootDirectory>True</SuppressRootDirectory>
+    </HarvestFile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Interface\IS.Interface.csproj">
+      <Name>IS.Interface</Name>
+      <Project>{46bf13ec-edaa-445c-b108-ce20be5a2c8a}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>
+      </DoNotHarvest>
+      <RefProjectOutputGroups>Binaries</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\RFID.CS\IS.RFID.CS.csproj">
+      <Name>IS.RFID.CS</Name>
+      <Project>{f50aea56-3dec-4e32-8739-e95bc1b8636a}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>
+      </DoNotHarvest>
+      <RefProjectOutputGroups>Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\RFID.Service\IS.RFID.Service.csproj">
+      <Name>IS.RFID.Service</Name>
+      <Project>{0eb37f22-f9a4-437f-b719-80670fc69730}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>
+      </DoNotHarvest>
+      <RefProjectOutputGroups>Binaries</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Output\" />
+  </ItemGroup>
+  <Import Project="$(WixTargetsPath)" Condition=" Exists('$(WixTargetsPath)') " />
+  <Target Name="EnsureWixToolsetInstalled" Condition=" !Exists('$(WixTargetsPath)') ">
+    <Error Text="The WiX Toolset v4 build tools must be installed to build this project. To download the WiX Toolset v4, see http://wixtoolset.org/releases/" />
+  </Target>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\WiX.4.0.0.5512-pre\build\wix.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\WiX.4.0.0.5512-pre\build\wix.props'))" />
+  </Target>
+  <!--
+  <Target Name="BeforeBuild">
+    <MSBuild Projects="%(ProjectReference.FullPath)" Targets="Compile" Properties="Configuration=$(Configuration);Platform=x86;OutDir=$(IntermediateOutputPath)" />
+    <HeatDirectory ToolPath="$(WixInstallPath)" Directory="$(IntermediateOutputPath)" OutputFile="$(IntermediateOutputPath)$(ProjectName).wxs" PreprocessorVariable="var.Directory" ComponentGroupName="cg.marc.cloud.rfid" DirectoryRefId="INSTALLFOLDER" AutoGenerateGuids="True" GenerateGuidsNow="True" SuppressFragments="True" SuppressRootDirectory="True" />
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <!--
+    -->
+</Project>

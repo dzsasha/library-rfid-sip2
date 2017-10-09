@@ -1,168 +1,81 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using IS.Interface.RFID;
+using System;
 using System.Runtime.InteropServices;
-using IS.Interface.RFID;
+using System.Text;
 
 namespace IS.RFID.IDLogic
 {
 	class Externals
 	{
 		private static object objLock = new object();
-		const string lib_name = "IdLogicRFidLibrary.dll";
-		[DllImport(lib_name, EntryPoint = "IsCardReaderOnline")]
-		private static extern int _IsCardReaderOnline();
-		[DllImport(lib_name, EntryPoint = "IsRfidReaderOnline")]
-		private static extern int _IsRfidReaderOnline();
-		[DllImport(lib_name, EntryPoint = "CardReaderRead")]
-		private static extern int _CardReaderRead(StringBuilder uid);
-		[DllImport(lib_name, EntryPoint = "RfidRead", CharSet = CharSet.Ansi)]
-		private static extern int _RfidRead([MarshalAs(UnmanagedType.LPStr)] StringBuilder uid);
-		[DllImport(lib_name, CharSet = CharSet.Ansi, EntryPoint = "EasGet")]
-		private static extern int _EasGet(string uid);
-		[DllImport(lib_name, CharSet = CharSet.Ansi, EntryPoint = "EasSet")]
-		private static extern int _EasSet(string uid);
-		[DllImport(lib_name, CharSet = CharSet.Ansi, EntryPoint = "EasReset")]
-		private static extern int _EasReset(string uid);
-		[DllImport(lib_name, CharSet = CharSet.Ansi, EntryPoint = "DM_BookLabel_Init")]
-		private static extern int _DM_BookLabel_Init(string uid);
-		[DllImport(lib_name, CharSet = CharSet.Ansi, EntryPoint = "DM_UserCard_Init")]
-		private static extern int _DM_UserCard_Init(string uid);
-		[DllImport(lib_name, CharSet = CharSet.Ansi, EntryPoint = "DM_Data_Read")]
-		private static extern int _DM_Data_Read(string uid, [MarshalAs(UnmanagedType.LPStr)] StringBuilder aTypeUsage, [MarshalAs(UnmanagedType.LPStr)] StringBuilder aPartsinItem, [MarshalAs(UnmanagedType.LPStr)] StringBuilder aPartNumber, [MarshalAs(UnmanagedType.LPStr)] StringBuilder aPrimaryItemId, [MarshalAs(UnmanagedType.LPStr)] StringBuilder aCountryLibrary, [MarshalAs(UnmanagedType.LPStr)] StringBuilder aISIL);
-		[DllImport(lib_name, CharSet = CharSet.Ansi, EntryPoint = "DM_Data_Write", CallingConvention = CallingConvention.StdCall)]
-		private static extern int _DM_Data_Write(string uid, [MarshalAs(UnmanagedType.LPStr)] StringBuilder aTypeUsage, [MarshalAs(UnmanagedType.LPStr)] StringBuilder aPartsinItem, [MarshalAs(UnmanagedType.LPStr)] StringBuilder aPartNumber, [MarshalAs(UnmanagedType.LPStr)] StringBuilder aPrimaryItemId, [MarshalAs(UnmanagedType.LPStr)] StringBuilder aCountryLibrary, [MarshalAs(UnmanagedType.LPStr)] StringBuilder aISIL);
+		const string lib_name = "EasyBook_RFid.dll";
+        [return: MarshalAs(UnmanagedType.I4)]
+        [DllImport(lib_name, EntryPoint = "IsReaderOnline", CallingConvention = CallingConvention.StdCall)]
+        private static extern int _IsReaderOnline(out int StateOK, int ReaderNo = 1);
+        [DllImport(lib_name, EntryPoint = "RfidReadDataByCfgPtr", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
+        private static extern int _RfidReadData(out int TagsCount, [MarshalAs(UnmanagedType.LPStr)] StringBuilder Data, int ReaderNo = 1, int AFullDM = 0, int AEAS = 0, int AReadTypeID = -1);
+        [DllImport(lib_name, EntryPoint = "RfidDM15InitPtr", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
+        private static extern int _RfidDM15Init([MarshalAs(UnmanagedType.LPStr)] string AUID, byte ATypeUsage, int ReaderNo = 1);
+        [DllImport(lib_name, EntryPoint = "RfidDM15WritePtr", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
+        private static extern int _RfidDM15Write([MarshalAs(UnmanagedType.LPStr)] string AUID, [MarshalAs(UnmanagedType.LPStr)] string ADM, int ReaderNo = 1);
+        [DllImport(lib_name, EntryPoint = "RfidDM15ReadPtr", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
+        private static extern int _RfidDM15Read([MarshalAs(UnmanagedType.LPStr)] string AUID, [MarshalAs(UnmanagedType.LPStr)] StringBuilder ADM, int ReaderNo = 1);
+        [DllImport(lib_name, EntryPoint = "RfidEASGetPtr", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
+        private static extern int _RfidEASGet([MarshalAs(UnmanagedType.LPStr)] string AUID, ref byte Value, int ReaderNo = 1);
+        [DllImport(lib_name, EntryPoint = "RfidEASSetPtr", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
+        private static extern int _RfidEASSet([MarshalAs(UnmanagedType.LPStr)] string AUID, byte Value, int ReaderNo = 1);
+        [DllImport(lib_name, EntryPoint = "RfidDM15ErasePtr", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
+        private static extern int _RfidDM15Erase([MarshalAs(UnmanagedType.LPStr)] string AUID, int ReaderNo = 1);
 
-		public static int IsCardReaderOnline()
-		{
-			lock (objLock)
-			{
-				return _IsCardReaderOnline();
-			}
-		}
-		public static int IsRfidReaderOnline()
-		{
-			lock (objLock)
-			{
-				return _IsRfidReaderOnline();
-			}
-		}
-		public static string RfidRead()
-		{
-			lock (objLock)
-			{
-				StringBuilder sOut = new StringBuilder(1024);
-				return (_RfidRead(sOut) > 0) ? sOut.ToString() : "";
-			}
-		}
+        public static bool IsReaderOnline()
+        {
+            int StateOK;
+            lock (objLock)
+            {
+                _IsReaderOnline(out StateOK);
+            }
+            return Convert.ToBoolean(StateOK);
+        }
+        public static string RfidReadData()
+        {
+            lock(objLock)
+            {
+                StringBuilder pData = new StringBuilder(1025);
+                int iCount;
+                _RfidReadData(out iCount, pData, 1, 1);
+                return pData.ToString();
+            }
+        }
 
-		public static string CardReaderRead()
-		{
-			lock (objLock)
-			{
-				StringBuilder sOut = new StringBuilder(1024);
-				return (_CardReaderRead(sOut) > 0) ? sOut.ToString() : "";
-			}
-		}
-		public static int EasGet(string uid)
-		{
-			lock (objLock)
-			{
-				return _EasGet(uid);
-			}
-		}
-		public static int EasSet(string uid)
-		{
-			lock (objLock)
-			{
-				return _EasSet(uid);
-			}
-		}
-		public static int EasReset(string uid)
-		{
-			lock (objLock)
-			{
-				return _EasReset(uid);
-			}
-		}
-		public static DanishModelImpl ReadModel(string uid, DanishModelImpl model)
-		{
-			lock (objLock)
-			{
-				StringBuilder aTypeUsage = new StringBuilder();
-				StringBuilder aPartsinItem = new StringBuilder();
-				StringBuilder aPartNumber = new StringBuilder();
-				StringBuilder aPrimaryItemId = new StringBuilder();
-				StringBuilder aCountryLibrary = new StringBuilder();
-				StringBuilder aIsil = new StringBuilder();
-				switch (_DM_Data_Read(uid, aTypeUsage, aPartsinItem, aPartNumber, aPrimaryItemId, aCountryLibrary, aIsil))
-				{
-					case -1: throw new RfidException("Oшибка чтения");
-					case 0: throw new RfidException("RFID-ридер недоступен/не подключен");
-					case 2: throw new RfidException("Метка не найдена");
-					case 3: throw new RfidException("Данные некорректны");
-					case 4: throw new RfidException("Некорректные входные параметры");
-					default:
-					{
-						model.STypeUsage = aTypeUsage.ToString();
-						model.SPartsinItem = aPartsinItem.ToString();
-						model.SPartNumber = aPartNumber.ToString();
-						model.SPrimaryItemId = aPrimaryItemId.ToString();
-						model.SCountryLibrary = aCountryLibrary.ToString();
-						model.SIsil = aIsil.ToString();
-					}
-					break;
-				}
-				return model;
-			}
-		}
-
-		public static void WriteModel(string uid, DanishModelImpl model)
-		{
-			lock (objLock)
-			{
-				StringBuilder aTypeUsage = new StringBuilder(model.STypeUsage);
-				StringBuilder aPartsinItem = new StringBuilder(model.SPartsinItem);
-				StringBuilder aPartNumber = new StringBuilder(model.SPartNumber);
-				StringBuilder aPrimaryItemId = new StringBuilder(model.SPrimaryItemId);
-				StringBuilder aCountryLibrary = new StringBuilder(model.SCountryLibrary);
-				StringBuilder aIsil = new StringBuilder(model.SIsil);
-				switch (_DM_Data_Write(uid, aTypeUsage, aPartsinItem, aPartNumber, aPrimaryItemId, aCountryLibrary, aIsil))
-				{
-					case -1: throw new RfidException("Oшибка чтения");
-					case 0: throw new RfidException("RFID-ридер недоступен/не подключен");
-					case 2: throw new RfidException("Метка не найдена");
-					case 3: throw new RfidException("Данные некорректны");
-					case 4: throw new RfidException("Некорректные входные параметры");
-				}
-			}
-		}
-
-		public static void BookLabelInit(string uid)
-		{
-			lock (objLock)
-			{
-				switch (_DM_BookLabel_Init(uid))
-				{
-					case -1: throw new Exception("Oшибка записи");
-					case 0: throw new Exception("RFID-ридер недоступен/не подключен");
-					case 2: throw new Exception("Метка не найдена");
-				}
-			}
-		}
-
-		public static void UserCardInit(string uid)
-		{
-			lock (objLock)
-			{
-				switch (_DM_UserCard_Init(uid))
-				{
-					case -1: throw new Exception("Oшибка записи");
-					case 0: throw new Exception("RFID-ридер недоступен/не подключен");
-					case 2: throw new Exception("Метка не найдена");
-				}
-			}
-		}
-	}
+        public static bool EasGet(string Id)
+        {
+            byte bRet = 0;
+            lock(objLock)
+            {
+                _RfidEASGet(Id, ref bRet);
+            }
+            return Convert.ToBoolean(bRet);
+        }
+        public static void EasSet(string Id, bool eas)
+        {
+            lock (objLock)
+            {
+                _RfidEASSet(Id, Convert.ToByte(eas));
+            }
+        }
+        public static void InitModel(string Id, TypeItem Type)
+        {
+            lock (objLock)
+            {
+                _RfidDM15Init(Id, Convert.ToByte(DanishModelImpl.TypeToString(Type)));
+            }
+        }
+        public static void WriteModel(string Id, DanishModelImpl model)
+        {
+            lock (objLock)
+            {
+                _RfidDM15Write(Id, model.ToString());
+            }
+        }
+    }
 }

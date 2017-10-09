@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("RFID.IDLogic")]
+[assembly: AssemblyTitle("RFID.SmartCard")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("RFID.IDLogic")]
+[assembly: AssemblyProduct("RFID.SmartCard")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("7bf70b72-d229-4a77-8687-34d62fc11c50")]
+[assembly: Guid("4b59cda6-18b4-4da2-a88d-4e1f69547259")]
 
 // Version information for an assembly consists of the following four values:
 //

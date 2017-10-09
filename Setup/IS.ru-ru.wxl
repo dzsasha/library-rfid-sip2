@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="ru-RU" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+	<String Id="DowngradeErrorMessage">Уже установлена более новая версия [ProductName].</String>
+  <String Id="NetFrameworkMinimum">Программе [ProductName] требуется установленный .NET Framework 4.0</String>
+  <String Id="WindowsVersion">Программе [ProductName] требуется Windows 7 или выше</String>
+  <String Id="Privileged">Для установки программы [ProductName] нужны права администратора.</String>
+</WixLocalization>

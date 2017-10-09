@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using IS.Interface;
@@ -10,9 +11,10 @@ namespace IS.RFID.IDLogic
 {
 	public sealed class DanishTypeImpl : TypeModelImpl<DanishModelImpl>, ITypeModel
 	{
-		public DanishTypeImpl(string id, IEnumerable<IField> param) : base(TypeModel.Danish, id)
+		public DanishTypeImpl(string id, string dm, IEnumerable<IField> param) : base(TypeModel.Danish, id, false)
 		{
 			_param = param;
+            if (!String.IsNullOrEmpty(dm)) Add(new DanishModelImpl(id, dm));
 		}
 		/// <summary>
 		/// Добавление модели к списку
@@ -20,10 +22,11 @@ namespace IS.RFID.IDLogic
 		/// <param name="item">модель</param>
 		public override void Add(IModel item)
 		{
-			if (Count == 0)
+			Log.For(this).Debug(String.Format("Model.id: {0}", item.Id));
+			base.Add(item);
+			if ((item is DanishModelImpl) && !(item as DanishModelImpl).IsInited)
 			{
-				Log.For(this).Debug(String.Format("Model.id: {0}", item.Id));
-				base.Add(item);
+                Externals.InitModel(_id, item.Type);
 			}
 		}
 		/// <summary>

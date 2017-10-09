@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{7BF70B72-D229-4A77-8687-34D62FC11C50}</ProjectGuid>
+    <ProjectGuid>{F433D6C3-6212-4B8D-9208-3E683ADF0131}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>IS.RFID.IDLogic</RootNamespace>
-    <AssemblyName>IS.RFID.IDLogic</AssemblyName>
+    <RootNamespace>IS.RFID.Bibliotheca</RootNamespace>
+    <AssemblyName>IS.RFID.Bibliotheca</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <OutputPath>..\$(Configuration)\</OutputPath>
@@ -24,7 +24,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
@@ -51,9 +51,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BiblioChip.cs" />
     <Compile Include="DanishModelImpl.cs" />
     <Compile Include="DanishTypeImpl.cs" />
-    <Compile Include="Externals.cs" />
     <Compile Include="ItemExImpl.cs" />
     <Compile Include="ReaderImpl.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -67,6 +67,9 @@
       <Project>{46bf13ec-edaa-445c-b108-ce20be5a2c8a}</Project>
       <Name>IS.Interface</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="BiblioChip\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
