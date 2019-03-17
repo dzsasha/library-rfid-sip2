@@ -12,13 +12,16 @@ namespace IS.RFID.SmartCard
     [ComVisible(true)]
     [ProgId("RFID.SmartCard")]
     [ClassInterface(ClassInterfaceType.AutoDispatch)]
-    public class SmartCardsImpl : IReader, IDisposable
+    public class SmartCardsImpl : IReader, IConfig, IDisposable
     {
         public SmartCardsImpl()
         {
+            _params.Add(new FieldImpl() { Description = "DLL Tools export", Name = "DllTool", Type = TypeField.String, Value = "" });
+            _params.Add(new FieldImpl() { Description = "Функция замены идентификатора", Name = "NumberReplace", Type = TypeField.String, Value = "" });
         }
 
         private IntPtr _hContext = IntPtr.Zero;
+        private List<IField> _params = new List<IField>();
         List<string> readersList = new List<string>();
 
         private OnNumberReplace _numberReplace = NumberReplace;
@@ -35,6 +38,14 @@ namespace IS.RFID.SmartCard
             }
             return sOut;
         }
+
+        #region implementation interface IConfig
+        public IField[] Fields
+        {
+            get { return _params.ToArray(); }
+        }
+        public string ProgId { get { return "RFID.Bibliotheca"; } }
+        #endregion
 
         #region implementation interface IReader
         public IItem[] Items

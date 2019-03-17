@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util">
+	<Fragment>
+		<DirectoryRef Id="INSTALLFOLDER">
+			<Component Id="IS.RFID.SmartCard.Application" Guid="9701A727-0877-4E6A-8015-43807626464D" KeyPath="yes">
+				<util:XmlConfig Id="IS.RFID.SmartCard.readers" File="[#WindowsServiceConfig]" Action="create" On="install" ElementPath="//configuration/rfid.service/readers" Node="document" Sequence="1">
+					<![CDATA[<reader object="RFID.SmartCard">
+                  <add name="DllTool" type="String" value="IS.RFID.Tools.dll"/>
+                  <add name="NumberReplace" type="String" value="FourFirstReverse"/>
+                </reader>]]>
+				</util:XmlConfig>
+			</Component>
+			<Component Id="IS.RFID.SmartCard.CS.Application" Guid="CB5DFF5D-98E4-455B-8B9A-B47DBEB75999" KeyPath="yes">
+				<util:XmlConfig Id="IS.RFID.SmartCard.CS.readers" File="[#WindowsServiceManifest]" Action="create" On="install" ElementPath="//assembly" Node="document" Sequence="1">
+					<![CDATA[<dependency xmlns="urn:schemas-microsoft-com:asm.v1"><dependentAssembly><assemblyIdentity name="IS.RFID.SmartCard" version="1.0.0.0" processorArchitecture="x86" publicKeyToken="7b778b88e9d94f2e"/></dependentAssembly></dependency>]]>
+				</util:XmlConfig>
+			</Component>
+			<Component Id="IS.RFID.SmartCard.Manifest" Guid="*">
+				<File Id="f.IS.RFID.SmartCard.Manifest" Name="$(var.IS.RFID.SmartCard.TargetName).Manifest" Source="$(var.IS.RFID.SmartCard.TargetDir)$(var.IS.RFID.SmartCard.TargetName).manifest"/>
+			</Component>
+		</DirectoryRef>
+	</Fragment>
+
+	<Fragment>
+		<ComponentGroup Id="IS.RFID.SmartCard">
+			<ComponentGroupRef Id="IS.RFID.SmartCard.Binaries"/>
+			<ComponentRef Id="IS.RFID.SmartCard.Application"/>
+			<ComponentRef Id="IS.RFID.SmartCard.CS.Application"/>
+			<ComponentRef Id="IS.RFID.SmartCard.Manifest"/>
+		</ComponentGroup>
+	</Fragment>
+</Wix>

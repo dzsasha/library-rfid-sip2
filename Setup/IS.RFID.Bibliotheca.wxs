@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util">
+	<Fragment>
+		<DirectoryRef Id="INSTALLFOLDER">
+			<Component Id="IS.RFID.Bibliotheca.Application" Guid="DA121B76-10C7-499F-8627-A3D13ED1E784" KeyPath="yes">
+				<util:XmlConfig Id="IS.RFID.Bibliotheca.readers" File="[#WindowsServiceConfig]" Action="create" On="install" ElementPath="//configuration/rfid.service/readers" Node="document" Sequence="1">
+					<![CDATA[<reader object="RFID.Bibliotheca">
+                  <add name="Country" type="String" value="RU"/>
+                  <add name="ISIL" type="String" value="10101010101"/>
+                </reader>]]>
+				</util:XmlConfig>
+			</Component>
+			<Component Id="IS.RFID.Bibliotheca.CS.Application" Guid="0B357352-5EE8-4428-B1C9-BD6AC510C02F" KeyPath="yes">
+				<util:XmlConfig Id="IS.RFID.Bibliotheca.CS.readers" File="[#WindowsServiceManifest]" Action="create" On="install" ElementPath="//assembly" Node="document" Sequence="1">
+					<![CDATA[<dependency xmlns="urn:schemas-microsoft-com:asm.v1"><dependentAssembly><assemblyIdentity name="IS.RFID.Bibliotheca" version="1.0.0.0" processorArchitecture="x86" publicKeyToken="7b778b88e9d94f2e"/></dependentAssembly></dependency>]]>
+				</util:XmlConfig>
+			</Component>
+			<Component Id="IS.RFID.Bibliotheca.Manifest" Guid="*">
+				<File Id="f.IS.RFID.Bibliotheca.Manifest" Name="$(var.IS.RFID.Bibliotheca.TargetName).Manifest" Source="$(var.IS.RFID.Bibliotheca.TargetDir)$(var.IS.RFID.Bibliotheca.TargetName).manifest"/>
+			</Component>
+		</DirectoryRef>
+	</Fragment>
+
+	<Fragment>
+		<ComponentGroup Id="IS.RFID.Bibliotheca">
+			<ComponentGroupRef Id="IS.RFID.Bibliotheca.Binaries"/>
+			<ComponentRef Id="IS.RFID.Bibliotheca.Application"/>
+			<ComponentRef Id="IS.RFID.Bibliotheca.CS.Application"/>
+			<ComponentRef Id="IS.RFID.Bibliotheca.Manifest"/>
+		</ComponentGroup>
+	</Fragment>
+</Wix>

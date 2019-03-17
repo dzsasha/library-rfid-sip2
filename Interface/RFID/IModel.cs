@@ -63,5 +63,10 @@ namespace IS.Interface.RFID
 		/// </summary>
 		/// <param name="model">модель</param>
 		void Add(IModel model);
+        /// <summary>
+        /// Удалить модель
+        /// </summary>
+        /// <param name="model">модель</param>
+        bool Remove(IModel model);
 	}
 }

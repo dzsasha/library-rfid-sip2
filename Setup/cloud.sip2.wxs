@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:netfx="http://wixtoolset.org/schemas/v4/wxs/netfx" xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util" xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/dependency" >
+	<?include IS.wxi?>
+	<?define appName="SIP2-server for marc.cloud"?>
+	<?define version="!(bind.FileVersion.WindowsService)"?>
+	<Product Id="*" Name="$(var.appName)" Language="1049" Version="$(var.version)" Codepage="$(var.CodePage)" Manufacturer="$(var.Manufactured)" UpgradeCode="E2D7C907-1EA0-4DF1-A77E-26184AD80E0F">
+		<Package InstallerVersion="200" Compressed="yes" Platform="x86" SummaryCodepage="$(var.CodePage)" InstallPrivileges="elevated" Comments="$(var.appName)" Description="$(var.appName)" />
+
+		<Property Id="ARPPRODUCTICON" Value="AddRemoveProgramsIcon" />
+		<MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeErrorMessage)"  />
+		<Media Id="1" Cabinet="cloud.sip2.cab" EmbedCab="yes" CompressionLevel="high"/>
+
+		<Property Id="NEWERVERSIONDETECTED" Secure="yes"/>
+		<Property Id="PREVIOUSVERSIONSINSTALLED" Secure="yes"/>
+		<Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+
+		<UIRef Id="WixUI_FeatureTree" />
+
+		<PropertyRef Id="WIX_IS_NETFRAMEWORK_40_OR_LATER_INSTALLED"/>
+
+		<Condition Message='!(loc.NetFrameworkMinimum)'><![CDATA[Installed OR WIX_IS_NETFRAMEWORK_40_OR_LATER_INSTALLED]]></Condition>
+		<Condition Message="!(loc.WindowsVersion)"><![CDATA[Installed OR VersionNT >= 601]]></Condition>
+		<Condition Message="!(loc.Privileged)">Privileged</Condition>
+
+		<WixVariable Id="WixUIBannerBmp" Value="logo_wix.bmp" />
+		<WixVariable Id="WixUIDialogBmp" Value="image_wix.bmp" />
+		<WixVariable Id="WixUILicenseRtf" Value="License.rtf"/>
+
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFilesFolder">
+				<Directory Id="ManufacturedFolder" Name="$(var.Manufactured)">
+					<Directory Id="INSTALLFOLDER" Name="$(var.appName)">
+						<Component Id="IS.SIP2.CS.exe" Guid="*">
+							<File Id="WindowsService" Name="$(var.IS.SIP2.CS.TargetFileName)" Source="$(var.IS.SIP2.CS.TargetPath)" DiskId="1"/>
+							<File Id="WindowsServiceConfig" Name="$(var.IS.SIP2.CS.TargetFileName).config" Source="$(var.IS.SIP2.CS.TargetPath).config" DiskId="1"/>
+						</Component>
+					</Directory>
+				</Directory>
+			</Directory>
+		</Directory>
+
+		<Feature Id="ProductFeature" Title="$(var.appName)" Absent="disallow" AllowAdvertise="no">
+			<ComponentGroupRef Id="Product.Generated" />
+			<ComponentGroupRef Id="IS.Interface.Log"/>
+			<ComponentRef Id="IS.SIP2.CS.exe"/>
+		</Feature>
+
+		<Binary Id="InstallUtil" SourceFile="C:\Windows\Microsoft.NET\Framework\v4.0.30319\InstallUtilLib.dll"/>
+		<CustomAction Id='InstallServiceSetProp' Property='InstallService' Value=' /installtype=notransaction /action=install /LogFile="[#WindowsService]".log /unattended "[#WindowsService]" "[#WindowsServiceConfig]"' />
+		<CustomAction Id='InstallService' BinaryKey='InstallUtil' DllEntry='ManagedInstall' Execute='deferred' Impersonate='no'/>
+		<CustomAction Id='UnInstallServiceSetProp' Property='UnInstallService' Value=' /installtype=notransaction /action=uninstall /LogFile="[#WindowsService]".log /unattended "[#WindowsService]" "[#WindowsServiceConfig]"' />
+		<CustomAction Id='UnInstallService' BinaryKey='InstallUtil' DllEntry='ManagedInstall' Execute='deferred' Impersonate='no'/>
+		<CustomAction Id='CommitServiceSetProp' Property='CommitService' Value=' /installtype=notransaction /action=commit /LogFile="[#WindowsService]".log /unattended "[#WindowsService]" "[#WindowsServiceConfig]"' />
+		<CustomAction Id='CommitService' BinaryKey='InstallUtil' DllEntry='ManagedInstall' Execute='commit' />
+		<CustomAction Id='RollbackServiceSetProp' Property='RollbackService' Value=' /installtype=notransaction /action=rollback /LogFile="[#WindowsService]".log /unattended "[#WindowsService]" "[#WindowsServiceConfig]"' />
+		<CustomAction Id='RollbackService' BinaryKey='InstallUtil' DllEntry='ManagedInstall' Execute='rollback' />
+		<InstallExecuteSequence>
+			<Custom Action="InstallServiceSetProp" After="InstallFiles">$IS.SIP2.CS.exe&gt;2</Custom>
+			<Custom Action="InstallService" After="InstallServiceSetProp">$IS.SIP2.CS.exe&gt;2</Custom>
+
+			<Custom Action="UnInstallServiceSetProp" Before="StopServices">$IS.SIP2.CS.exe=2</Custom>
+			<Custom Action="UnInstallService" After="UnInstallServiceSetProp">$IS.SIP2.CS.exe=2</Custom>
+
+			<Custom Action="CommitServiceSetProp" After="RollbackService">$IS.SIP2.CS.exe&gt;2</Custom>
+			<Custom Action="CommitService" After="CommitServiceSetProp">$IS.SIP2.CS.exe&gt;2</Custom>
+
+			<Custom Action="RollbackServiceSetProp" After="InstallService">$IS.SIP2.CS.exe&gt;2</Custom>
+			<Custom Action="RollbackService" After="RollbackServiceSetProp">$IS.SIP2.CS.exe&gt;2</Custom>
+		</InstallExecuteSequence>
+
+	</Product>
+
+</Wix>

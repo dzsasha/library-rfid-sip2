@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util">
+	<Fragment>
+		<DirectoryRef Id="INSTALLFOLDER">
+			<Component Id="IS.RFID.IDLogic.Application" Guid="0F1D8A70-262D-4D59-85DC-42578B992718" KeyPath="yes">
+				<util:XmlConfig Id="IS.RFID.IDLogic.readers" File="[#WindowsServiceConfig]" Action="create" On="install" ElementPath="//configuration/rfid.service/readers" Node="document" Sequence="1">
+					<![CDATA[<reader object="RFID.IDLogic">
+                  <add name="Country" type="String" value="RU"/>
+                  <add name="ISIL" type="String" value="10101010101"/>
+                </reader>]]>
+				</util:XmlConfig>
+			</Component>
+			<Component Id="IS.RFID.IDLogic.CS.Application" Guid="D10AB1CE-6E48-4965-A24D-A845313D32F5" KeyPath="yes">
+				<util:XmlConfig Id="IS.RFID.IDLogic.CS.readers" File="[#WindowsServiceManifest]" Action="create" On="install" ElementPath="//assembly" Node="document" Sequence="1">
+					<![CDATA[<dependency xmlns="urn:schemas-microsoft-com:asm.v1"><dependentAssembly><assemblyIdentity name="IS.RFID.IDLogic" version="1.0.0.0" processorArchitecture="x86" publicKeyToken="7b778b88e9d94f2e"/></dependentAssembly></dependency>]]>
+				</util:XmlConfig>
+			</Component>
+			<Component Id="IS.RFID.IDLogic.Manifest" Guid="*">
+				<File Id="f.IS.RFID.IDLogic.Manifest" Name="$(var.IS.RFID.IDLogic.TargetName).Manifest" Source="$(var.IS.RFID.IDLogic.TargetDir)$(var.IS.RFID.IDLogic.TargetName).manifest"/>
+			</Component>
+		</DirectoryRef>
+	</Fragment>
+
+	<Fragment>
+		<ComponentGroup Id="IS.RFID.IDLogic">
+			<ComponentGroupRef Id="IS.RFID.IDLogic.Binaries"/>
+			<ComponentRef Id="IS.RFID.IDLogic.Application"/>
+			<ComponentRef Id="IS.RFID.IDLogic.Manifest"/>
+			<ComponentRef Id="IS.RFID.IDLogic.CS.Application"/>
+		</ComponentGroup>
+	</Fragment>
+</Wix>

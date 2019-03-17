@@ -8,40 +8,37 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IS.RFID.IDLogic
-{
+namespace IS.RFID.IDLogic {
     [Guid("6CCE520B-8459-475C-BD0C-2FED7F7F94E7")]
     [ComVisible(true)]
     [ProgId("RFID.IDLogic")]
     [ClassInterface(ClassInterfaceType.AutoDispatch)]
-    public class ReaderImpl : IReader, IDisposable
-    {
-        public ReaderImpl() { }
-        private string _readed = "";
+    public class ReaderImpl : IReader, IConfig, IDisposable {
+        public ReaderImpl() {
+            _params.Add(new FieldImpl() { Description = "Страна", Name = "Country", Type = TypeField.String, Value = "RU" });
+            _params.Add(new FieldImpl() { Description = "ISIL", Name = "ISIL", Type = TypeField.String, Value = "" });
+        }
+
+        public IField[] Fields => _params.ToArray();
+
+        public string ProgId => "RFID.IDLogic";
         private List<IField> _params = new List<IField>();
-        private ItemExImpl GetItem(string id)
-        {
-            return new ItemExImpl(id.Split('=')[0], id.Split('=')[1], _params);
+        private ItemExImpl GetItem(string id) {
+            return new ItemExImpl(this, id.Split('=')[0]);
         }
         #region implemenatation interface IReader
-        public IItem[] Items
-        {
-            get
-            {
+        public IItem[] Items {
+            get {
                 List<IItem> lRet = new List<IItem>();
-                try
-                {
+                try {
                     string sRead = Externals.RfidReadData();
-                    if (!String.IsNullOrEmpty(sRead))
-                    {
+                    if (!String.IsNullOrEmpty(sRead)) {
                         lRet.AddRange(sRead.Split(',').Select(GetItem));
-                        if (OnChange != null) OnChange(this, new EventArgs());
+                        OnChange?.Invoke(this, new EventArgs());
                     }
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     Log.For(this).Error(this, ex);
-                    if (OnError != null) OnError(this, new ErrorEventArgs(ex));
+                    OnError?.Invoke(this, new ErrorEventArgs(ex));
                 }
                 return lRet.ToArray();
             }
@@ -50,36 +47,36 @@ namespace IS.RFID.IDLogic
         public event EventHandler OnChange;
         public event ErrorEventHandler OnError;
 
-        public void CloseReader()
-        {
-            try
-            {
-            }
-            catch (Exception ex)
-            {
+        public void CloseReader() {
+            try {
+            } catch (Exception ex) {
                 Log.For(this).Error(this, ex);
-                if (OnError != null) OnError(this, new ErrorEventArgs(ex));
+                OnError?.Invoke(this, new ErrorEventArgs(ex));
             }
         }
-        public bool InitReader(IField[] param)
-        {
-            try
-            {
-                _params.AddRange(param);
+        public bool InitReader(IField[] param) {
+            try {
+                foreach (IField field in param) {
+                    switch (field.Name) {
+                        case "Country":
+                            _params[0].Value = field.Value;
+                            break;
+                        case "ISIL":
+                            _params[1].Value = field.Value;
+                            break;
+                    }
+                }
                 return Externals.IsReaderOnline();
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 Log.For(this).Error(this, ex);
-                if (OnError != null) OnError(this, new ErrorEventArgs(ex));
+                OnError?.Invoke(this, new ErrorEventArgs(ex));
             }
             return false;
         }
         #endregion
 
         #region implemenatation interface IDisposable
-        public void Dispose()
-        {
+        public void Dispose() {
             CloseReader();
         }
         #endregion

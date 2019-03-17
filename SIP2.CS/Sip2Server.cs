@@ -1,141 +1,122 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Net;
 using System.Net.Sockets;
+using IS.Interface.SIP2;
+using IS.Interface;
+using System.Net;
+using System.Collections.Generic;
 using System.Text;
 using System.Threading;
-using IS.Interface;
-using IS.Interface.SIP2;
+using System.Threading.Tasks;
+using IS.SIP2.CS.SIP2;
 
-namespace IS.SIP2.CS
-{
-	public class Sip2Server : ISip2Answers, IDisposable
-	{
-		private Socket _listener = null;
-		private List<Sip2Client> clients = new List<Sip2Client>();
-		public Sip2Server(ServiceSection config)
-		{
-			_config = config;
-			_answer = (ISip2Answers)Activator.CreateInstance(Type.GetTypeFromProgID(_config.Answers.Name));
-			_answer.OnError += new ErrorEventHandler(command_OnError);
-			foreach (ISip2Command command in _answer.Commands)
-			{
-				command.OnError += new ErrorEventHandler(command_OnError);
-			}
-		}
+namespace IS.SIP2.CS {
+    public class Sip2Server : IDisposable {
+        private Socket _listener = null;
+        private readonly SocketAsyncEventArgs _acceptArgs = new SocketAsyncEventArgs();
+        private ISip2 _sip2Client = null;
+        private ISip2Config _config = null;
+        private ServiceSection _serviceSection = null;
+        public Sip2Server(ServiceSection config) {
+            _config = new Sip2ConfigImpl(config.Answers.Params, config.Answers.Debug, config.Answers.Separator);
+            _serviceSection = config;
+            _acceptArgs.Completed += new EventHandler<SocketAsyncEventArgs>(AcceptEventArg_Completed);
+        }
 
-		void command_OnError(object sender, ErrorEventArgs e)
-		{
-			Log.For(sender).Error(e.GetException().Message);
-			if (OnError != null)
-			{
-				OnError(sender, e);
-			}
-		}
+        internal void Start() {
+            try {
+                Type typeStart = Type.GetType(_serviceSection.Answers.Name);
+                if ((_sip2Client = (ISip2)Activator.CreateInstance(typeStart)) == null) {
+                    throw new NullReferenceException();
+                } else {
+                    if (!_sip2Client.init(_config)) {
+                        throw new InvalidOperationException();
+                    } else {
+                        _sip2Client.OnError += Sip2Client_OnError;
+                        IPAddress address = IPAddress.Parse(_serviceSection.Answers.Address);
+                        IPEndPoint localEndPoint = new IPEndPoint(address, _serviceSection.Answers.Port);
+                        _listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, _serviceSection.Answers.Proto);
+                        _listener.Bind(localEndPoint);
+                        _listener.Listen(_serviceSection.Answers.MaxConnection);
+                        AcceptAsync(_acceptArgs);
+                    }
+                }
+            } catch (Exception ex) {
+                Log.For(this).Error("Start", ex);
+                Sip2Client_OnError(this, new ErrorEventArgs(ex));
+            }
+        }
+        private void AcceptAsync(SocketAsyncEventArgs e) {
+            if (!_listener.AcceptAsync(e)) {
+                AcceptEventArg_Completed(_listener, e);
+            }
+        }
 
-		private readonly ServiceSection _config;
+        private async void AcceptEventArg_Completed(object sender, SocketAsyncEventArgs e) {
+            if (e.SocketError == SocketError.Success) {
+                await ReceiveAsync(e.AcceptSocket).ConfigureAwait(false);
+                e.AcceptSocket = null;
+                AcceptAsync(_acceptArgs);
+            }
+        }
+        public async Task ReceiveAsync(Socket socket) {
+            if (socket != null) {
+                new Thread(async () => {
+                    while (socket.Connected) {
+                        try {
+                            var buffer = new byte[4096];
+                            var byteReads = await Task.Factory.FromAsync(socket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, null, socket), socket.EndReceive).ConfigureAwait(false);
+                            if (byteReads > 0) {
+                                foreach (string sb in Encoding.UTF8.GetString(buffer, 0, byteReads).Split(new char[] { '\r' }, StringSplitOptions.RemoveEmptyEntries)) {
+                                    Log.For(this).DebugFormat("ReceiveAsync from {0}: {1}", socket.LocalEndPoint.ToString(), sb);
+                                    OnReceive?.Invoke(socket, new Sip2MessageEventArgs(sb));
+                                    if (!Sip2AnswerImpl.verify(sb)) {
+                                        throw new Exception("error checksum");
+                                    }
+                                    string strSend = _sip2Client.doMessage(sb, _config);
+                                    if (!Sip2AnswerImpl.verify(strSend)) {
+                                        throw new Exception("error checksum");
+                                    }
+                                    if (!String.IsNullOrEmpty(strSend) && socket.Send(Encoding.UTF8.GetBytes(strSend)) > 0 && OnSend != null) {
+                                        socket.Send(new byte[] { 0x0D });
+                                        Log.For(this).DebugFormat("send: {0}", strSend);
+                                        OnSend(socket, new Sip2MessageEventArgs(strSend));
+                                    }
+                                }
+                            }
+                        } catch (Exception ex) {
+                            Log.For(this).Error("ReceiveAsync", ex);
+                            Sip2Client_OnError(this, new ErrorEventArgs(ex));
+                        }
+                    }
+                }).Start();
+            }
+        }
 
-		internal void Start()
-		{
-			IPAddress address = IPAddress.Parse(_config.Answers.Address);
-			IPEndPoint localEndPoint = new IPEndPoint(address, _config.Answers.Port);
-			_listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, _config.Answers.Proto);
-			try
-			{
-				_listener.Bind(localEndPoint);
-				_listener.Listen(_config.Answers.MaxConnection);
-				SocketAsyncEventArgs e = new SocketAsyncEventArgs();
-				e.Completed += new EventHandler<SocketAsyncEventArgs>(AcceptEventArg_Completed);
-				if (!_listener.AcceptAsync(e))
-				{
-					AcceptEventArg_Completed(_listener, e);
-				}
-				Log.For(this).Info(String.Format("Listen SIP2-server for address: {0}", localEndPoint.ToString()));
-			}
-			catch (Exception ex)
-			{
-				command_OnError(this, new ErrorEventArgs(ex));
-			}
-		}
+        private void Sip2Client_OnError(object sender, ErrorEventArgs e) {
+            OnError?.Invoke(sender, e);
+        }
 
-		void AcceptEventArg_Completed(object sender, SocketAsyncEventArgs e)
-		{
-			if (e.SocketError == SocketError.Success)
-			{
-				Sip2Client client = new Sip2Client(e.AcceptSocket, _config);
-				client.OnReceive += new EventHandler<Sip2MessageEventArgs>(client_OnReceive);
-				clients.Add(client);
-				Log.For(this).Info(String.Format("Accept client from address: {0}", e.AcceptSocket.RemoteEndPoint.ToString()));
-			}
-		}
+        internal void Stop() {
+            try {
+                if (_listener != null) {
+                    _listener.Close();
+                    _listener = null;
+                }
+            } catch (Exception ex) {
+                Log.For(this).Error("Stop", ex);
+                Sip2Client_OnError(this, new ErrorEventArgs(ex));
+            }
+        }
 
-		void client_OnReceive(object sender, Sip2MessageEventArgs e)
-		{
-			if (e.Message != null)
-			{
-				foreach (ISip2Command command in (this as ISip2Answers).Commands)
-				{
-					if (command.Request.Equals(e.Message.Request.Command))
-					{
-						IField[] fields = e.Message.Response.ToArray();
-						if (Convert.ToInt16(e.Message.Version) <= (Convert.ToInt16(_answer.Version)))
-						{
-							if (command.Execute(e.Message.Request.Cast<IField>().ToArray(), ref fields))
-							{
-								e.Message.Response.GetFieldImpl("sequence").Value = e.Message.Request.GetFieldImpl("sequence").Value;
-								if (sender is Sip2Client)
-								{
-									(sender as Sip2Client).Send(e.Message);
-								}
-							}
-						}
-					}
-				}
-			}
-		}
+        public event EventHandler<Sip2MessageEventArgs> OnReceive;
+        public event EventHandler<Sip2MessageEventArgs> OnSend;
+        public event ErrorEventHandler OnError;
 
-		internal void Stop()
-		{
-			if (_listener != null)
-			{
-				_listener.Close();
-			}
-		}
-
-		public event EventHandler<Sip2MessageEventArgs> OnReceive;
-		public event EventHandler<Sip2MessageEventArgs> OnSend;
-
-		#region implementation interface ISip2Answers
-		private readonly ISip2Answers _answer = null;
-
-		public bool Init(IField[] paramsFields)
-		{
-			return (_answer != null && _answer.Init(paramsFields));
-		}
-
-		public ISip2Command[] Commands
-		{
-			get { return (_answer != null) ? _answer.Commands : new List<ISip2Command>().ToArray(); }
-		}
-
-		Sip2Version ISip2Answers.Version { get { return (_answer != null) ? _answer.Version : Sip2Version.V100; } }
-
-		public event ErrorEventHandler OnError;
-		#endregion
-
-		#region implementation interface IDisposable
-		public void Dispose()
-		{
-			foreach (ISip2Command command in _answer.Commands)
-			{
-				command.OnError -= command_OnError;
-			}
-			Stop();
-		}
-		#endregion
-	}
+        #region implementation interface IDisposable
+        public void Dispose() {
+            Stop();
+        }
+        #endregion
+    }
 }

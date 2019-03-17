@@ -10,36 +10,50 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>IS.SIP2.CS</RootNamespace>
     <AssemblyName>IS.SIP2.CS</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <OutputPath>..\$(Configuration)\</OutputPath>
+    <PlatformTarget>x86</PlatformTarget>
+    <Prefer32Bit>true</Prefer32Bit>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
+    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup />
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\InformSystema.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DelaySign>false</DelaySign>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>IS.SIP2.CS.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="log4net, Version=1.2.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL" />
+    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
+    <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -51,10 +65,13 @@
   <ItemGroup>
     <Compile Include="CoreExt.cs" />
     <Compile Include="Interfaces.cs" />
-    <Compile Include="Sip2FieldsImpl.cs" />
+    <Compile Include="ProjectInstaller.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ProjectInstaller.Designer.cs">
+      <DependentUpon>ProjectInstaller.cs</DependentUpon>
+    </Compile>
     <Compile Include="Sip2MessageEventArgs.cs" />
-    <Compile Include="Sip2Client.cs" />
-    <Compile Include="Sip2Message.cs" />
     <Compile Include="ParamElement.cs" />
     <Compile Include="ParamsCollection.cs" />
     <Compile Include="ServerLog.cs">
@@ -72,12 +89,40 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServiceSection.cs" />
-    <Compile Include="Sip2FieldImpl.cs" />
-    <Compile Include="Sip2DebugFields.cs" />
     <Compile Include="Sip2Server.cs" />
+    <Compile Include="SIP2\CheckInRequestImpl.cs" />
+    <Compile Include="SIP2\CheckInResponseImpl.cs" />
+    <Compile Include="SIP2\CheckOutRequestImpl.cs" />
+    <Compile Include="SIP2\CheckOutResponseImpl.cs" />
+    <Compile Include="SIP2\Delegates.cs" />
+    <Compile Include="SIP2\EndPatronSessionRequestImpl.cs" />
+    <Compile Include="SIP2\EndPatronSessionResponseImpl.cs" />
+    <Compile Include="SIP2\ItemInformationResponseImpl.cs" />
+    <Compile Include="SIP2\ItemInformationRequestImpl.cs" />
+    <Compile Include="SIP2\ItemStatusUpdateRequestImpl.cs" />
+    <Compile Include="SIP2\ItemStatusUpdateResponseImpl.cs" />
+    <Compile Include="SIP2\LoginRequestImpl.cs" />
+    <Compile Include="SIP2\LoginResponseImpl.cs" />
+    <Compile Include="SIP2\PatronInformationRequestImpl.cs" />
+    <Compile Include="SIP2\PatronInformationResponseImpl.cs" />
+    <Compile Include="SIP2\PatronStatusRequestImpl.cs" />
+    <Compile Include="SIP2\PatronStatusResponseImpl.cs" />
+    <Compile Include="SIP2\RenewAllRequestImpl.cs" />
+    <Compile Include="SIP2\RenewAllResponseImpl.cs" />
+    <Compile Include="SIP2\RenewRequestImpl.cs" />
+    <Compile Include="SIP2\RenewResponseImpl.cs" />
+    <Compile Include="SIP2\SCStatusRequestImpl.cs" />
+    <Compile Include="SIP2\SCStatusResponseImpl.cs" />
+    <Compile Include="SIP2\Sip2AnswerImpl.cs" />
+    <Compile Include="SIP2\Sip2FieldAttribute.cs" />
+    <Compile Include="SIP2\Sip2Formatter.cs" />
+    <Compile Include="SIP2\Sip2ResponsePrintImpl.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="InformSystema.snk" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Interface\IS.Interface.csproj">
@@ -86,6 +131,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="ProjectInstaller.resx">
+      <DependentUpon>ProjectInstaller.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ServerLog.resx">
       <DependentUpon>ServerLog.cs</DependentUpon>
     </EmbeddedResource>

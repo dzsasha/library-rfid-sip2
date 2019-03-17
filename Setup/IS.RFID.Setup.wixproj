@@ -9,10 +9,10 @@
     <OutputName>marc.cloud.rfid</OutputName>
     <OutputType>Package</OutputType>
     <Name>IS.RFID.Setup</Name>
+    <DefineConstants>IDLogic.External=..\RFID.IDLogic\Dll;Bibliotheca.External=..\RFID.Bibliotheca\BiblioChip;</DefineConstants>
     <OutputPath>..\$(Configuration)\</OutputPath>
     <IntermediateOutputPath>..\$(Configuration)\</IntermediateOutputPath>
     <Cultures>ru-RU</Cultures>
-    <DefineConstants>Directory=$(IntermediateOutputPath);</DefineConstants>
     <EnableProjectHarvesting>True</EnableProjectHarvesting>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
@@ -20,28 +20,47 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="cloud.rfid.wxs" />
+    <Compile Include="IS.RFID.Bibliotheca.wxs" />
+    <Compile Include="IS.RFID.IDLogic.wxs" />
+    <Compile Include="IS.RFID.SmartCard.wxs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Image_wix.bmp" />
     <Content Include="IS.wxi" />
+    <Content Include="License.rtf" />
+    <Content Include="logo_wix.bmp" />
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="IS.ru-ru.wxl" />
   </ItemGroup>
   <ItemGroup>
-    <WixExtension Include="WixNetFxExtension">
-      <HintPath>$(WixInstallPath)\WixNetFxExtension.dll</HintPath>
-      <Name>WixNetFxExtension</Name>
+    <WixExtension Include="WixUtilExtension">
+      <HintPath>$(WixExtDir)\WixUtilExtension.dll</HintPath>
+      <Name>WixUtilExtension</Name>
     </WixExtension>
     <WixExtension Include="WixUIExtension">
-      <HintPath>$(WixInstallPath)\WixUIExtension.dll</HintPath>
+      <HintPath>$(WixExtDir)\WixUIExtension.dll</HintPath>
+      <Name>WixUIExtension</Name>
+    </WixExtension>
+    <WixExtension Include="WixNetFxExtension">
+      <HintPath>$(WixExtDir)\WixNetFxExtension.dll</HintPath>
       <Name>WixNetFxExtension</Name>
     </WixExtension>
+  </ItemGroup>
+  <ItemGroup>
     <HarvestFile Include="$(IntermediateOutputPath)\log4net.dll">
-      <Link>Output\log4net.dll</Link>
+      <Link>External\log4net.dll</Link>
       <ComponentGroupName>IS.Interface.Log</ComponentGroupName>
       <DirectoryRefId>INSTALLFOLDER</DirectoryRefId>
       <PreprocessorVariable>var.IS.Interface.TargetDir</PreprocessorVariable>
+      <SuppressRootDirectory>True</SuppressRootDirectory>
+    </HarvestFile>
+    <HarvestFile Include="$(IntermediateOutputPath)\websocket-sharp.dll">
+      <Link>External\websocket-sharp.dll</Link>
+      <ComponentGroupName>IS.RFID.CS.WebSocket</ComponentGroupName>
+      <DirectoryRefId>INSTALLFOLDER</DirectoryRefId>
+      <PreprocessorVariable>var.IS.RFID.CS.TargetDir</PreprocessorVariable>
       <SuppressRootDirectory>True</SuppressRootDirectory>
     </HarvestFile>
   </ItemGroup>
@@ -55,6 +74,16 @@
       <RefProjectOutputGroups>Binaries</RefProjectOutputGroups>
       <RefTargetDir>INSTALLFOLDER</RefTargetDir>
     </ProjectReference>
+    <ProjectReference Include="..\RFID.Bibliotheca\IS.RFID.Bibliotheca.csproj">
+      <Name>IS.RFID.Bibliotheca</Name>
+      <Project>{f433d6c3-6212-4b8d-9208-3e683adf0131}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>
+      </DoNotHarvest>
+      <RefProjectOutputGroups>
+      </RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
     <ProjectReference Include="..\RFID.CS\IS.RFID.CS.csproj">
       <Name>IS.RFID.CS</Name>
       <Project>{f50aea56-3dec-4e32-8739-e95bc1b8636a}</Project>
@@ -64,9 +93,38 @@
       <RefProjectOutputGroups>Satellites</RefProjectOutputGroups>
       <RefTargetDir>INSTALLFOLDER</RefTargetDir>
     </ProjectReference>
+    <ProjectReference Include="..\RFID.IDLogic\IS.RFID.IDLogic.csproj">
+      <Name>IS.RFID.IDLogic</Name>
+      <Project>{7bf70b72-d229-4a77-8687-34d62fc11c50}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>
+      </DoNotHarvest>
+      <RefProjectOutputGroups>
+      </RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
     <ProjectReference Include="..\RFID.Service\IS.RFID.Service.csproj">
       <Name>IS.RFID.Service</Name>
-      <Project>{0eb37f22-f9a4-437f-b719-80670fc69730}</Project>
+      <Project>{22653b5c-aac6-430d-ade2-a856506b3882}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>
+      </DoNotHarvest>
+      <RefProjectOutputGroups>Binaries</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\RFID.SmartCard\IS.RFID.SmartCard.csproj">
+      <Name>IS.RFID.SmartCard</Name>
+      <Project>{4b59cda6-18b4-4da2-a88d-4e1f69547259}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>
+      </DoNotHarvest>
+      <RefProjectOutputGroups>
+      </RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\RFID.Tools\IS.RFID.Tools.csproj">
+      <Name>IS.RFID.Tools</Name>
+      <Project>{421e08ae-a87d-4fd8-9a5a-715804747c84}</Project>
       <Private>True</Private>
       <DoNotHarvest>
       </DoNotHarvest>
@@ -75,7 +133,16 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Output\" />
+    <HarvestDirectory Include="..\RFID.IDLogic\Dll">
+      <Link>IDLogic</Link>
+      <DirectoryRefId>INSTALLFOLDER</DirectoryRefId>
+      <SuppressRootDirectory>True</SuppressRootDirectory>
+      <ComponentGroupName>IS.RFID.IDLogic.External</ComponentGroupName>
+      <PreprocessorVariable>var.IDLogic.External</PreprocessorVariable>
+    </HarvestDirectory>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="External\" />
   </ItemGroup>
   <Import Project="$(WixTargetsPath)" Condition=" Exists('$(WixTargetsPath)') " />
   <Target Name="EnsureWixToolsetInstalled" Condition=" !Exists('$(WixTargetsPath)') ">

@@ -1,74 +1,89 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:netfx="http://wixtoolset.org/schemas/v4/wxs/netfx" xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util">
-  <?include IS.wxi?>
-  <?define appName="RFID-service for marc.cloud"?>
-  <?define version="!(bind.FileVersion.WindowsService)"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:netfx="http://wixtoolset.org/schemas/v4/wxs/netfx" xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util" xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/dependency" >
+	<?include IS.wxi?>
+	<?define appName="RFID-service for marc.cloud"?>
+	<?define version="!(bind.FileVersion.WindowsService)"?>
 	<Product Id="*" Name="$(var.appName)" Language="1049" Version="$(var.version)" Codepage="$(var.CodePage)" Manufacturer="$(var.Manufactured)" UpgradeCode="3c0db6dd-ff73-49b6-a00e-4e55db615163">
 		<Package InstallerVersion="200" Compressed="yes" Platform="x86" SummaryCodepage="$(var.CodePage)" InstallPrivileges="elevated" Comments="$(var.appName)" Description="$(var.appName)" />
 
-    <Icon Id="AddRemoveProgramsIcon" SourceFile="$(var.IS.RFID.CS.ProjectDir)\rfid.ico"/>
-    <Property Id="ARPPRODUCTICON" Value="AddRemoveProgramsIcon" />
-    <MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeErrorMessage)"  />
-    <Media Id="1" Cabinet="cloud.rfid.cab" EmbedCab="yes" CompressionLevel="high"/>
+		<Icon Id="AddRemoveProgramsIcon" SourceFile="$(var.IS.RFID.CS.ProjectDir)\rfid.ico"/>
+		<Property Id="ARPPRODUCTICON" Value="AddRemoveProgramsIcon" />
+		<MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeErrorMessage)"  />
+		<Media Id="1" Cabinet="cloud.rfid.cab" EmbedCab="yes" CompressionLevel="high"/>
 
-    <PropertyRef Id="WIX_IS_NETFRAMEWORK_40_OR_LATER_INSTALLED"/>
-    <Condition Message='!(loc.NetFrameworkMinimum)'>
-      <![CDATA[Installed OR WIX_IS_NETFRAMEWORK_40_OR_LATER_INSTALLED]]>
-    </Condition>
-    <Condition Message="!(loc.WindowsVersion)">
-      <![CDATA[Installed OR VersionNT >= 601]]>
-    </Condition>
-    <Condition Message="!(loc.Privileged)">
-      Privileged
-    </Condition>
+		<Property Id="NEWERVERSIONDETECTED" Secure="yes"/>
+		<Property Id="PREVIOUSVERSIONSINSTALLED" Secure="yes"/>
+		<Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
 
-    <Directory Id="TARGETDIR" Name="SourceDir">
-      <Directory Id="ProgramFilesFolder">
-        <Directory Id="ManufacturedFolder" Name="$(var.Manufactured)">
-          <Directory Id="INSTALLFOLDER" Name="$(var.appName)">
-            <Component Id="IS.RFID.CS.exe" Guid="*">
-              <File Id="WindowsService" Name="$(var.IS.RFID.CS.TargetFileName)" Source="$(var.IS.RFID.CS.TargetPath)" DiskId="1"/>
-              <File Id="WindowsServiceConfig" Name="$(var.IS.RFID.CS.TargetFileName).config" Source="$(var.IS.RFID.CS.TargetPath).config" DiskId="1"/>
-              <ServiceControl Id="IS.Service.RFID" Name="IS.Service.RFID" Stop="uninstall" Start="install"/>
-            </Component>
-            <Component Id="manifest" Guid="*">
-              <File Id="IS.RFID.IDLogic.manifest" Name="$(var.IS.RFID.IDLogic.TargetName).manifest" Source="$(var.IS.RFID.IDLogic.TargetDir)$(var.IS.RFID.IDLogic.TargetName).manifest"/>
-            </Component>
-          </Directory>
-        </Directory>
-      </Directory>
-    </Directory>
+		<UIRef Id="WixUI_FeatureTree" />
 
-    <Feature Id="ProductFeature" Title="$(var.appName)" Level="1">
-      <ComponentGroupRef Id="Product.Generated" />
-      <ComponentGroupRef Id="IS.Interface.Log"/>
-      <ComponentRef Id="IS.RFID.CS.exe"/>
-      <ComponentRef Id="manifest"/>
-    </Feature>
-    
-    <Binary Id="InstallUtil" SourceFile="C:\Windows\Microsoft.NET\Framework\v4.0.30319\InstallUtilLib.dll"/>
-    <CustomAction Id='InstallServiceSetProp' Property='InstallService' Value=' /installtype=notransaction /action=install /LogFile="[#WindowsService]".log /unattended "[#WindowsService]" "[#WindowsServiceConfig]"' />
-    <CustomAction Id='InstallService' BinaryKey='InstallUtil' DllEntry='ManagedInstall' Execute='deferred' Return='check'/>
-    <CustomAction Id='UnInstallServiceSetProp' Property='UnInstallService' Value=' /installtype=notransaction /action=uninstall /LogFile="[#WindowsService]".log /unattended "[#WindowsService]" "[#WindowsServiceConfig]"' />
-    <CustomAction Id='UnInstallService' BinaryKey='InstallUtil' DllEntry='ManagedInstall' Execute='deferred'/>
-    <CustomAction Id='CommitServiceSetProp' Property='CommitService' Value=' /installtype=notransaction /action=commit /LogFile="[#WindowsService]".log /unattended "[#WindowsService]" "[#WindowsServiceConfig]"' />
-    <CustomAction Id='CommitService' BinaryKey='InstallUtil' DllEntry='ManagedInstall' Execute='commit' />
-    <CustomAction Id='RollbackServiceSetProp' Property='RollbackService' Value=' /installtype=notransaction /action=rollback /LogFile="[#WindowsService]".log /unattended "[#WindowsService]" "[#WindowsServiceConfig]"' />
-    <CustomAction Id='RollbackService' BinaryKey='InstallUtil' DllEntry='ManagedInstall' Execute='rollback' />
-    <InstallExecuteSequence>
-      <Custom Action="InstallServiceSetProp" After="InstallFiles">$IS.RFID.CS.exe&gt;2</Custom>
-      <Custom Action="InstallService" After="InstallServiceSetProp">$IS.RFID.CS.exe&gt;2</Custom>
+		<PropertyRef Id="WIX_IS_NETFRAMEWORK_40_OR_LATER_INSTALLED"/>
 
-      <Custom Action="UnInstallServiceSetProp" Before="StopServices">$IS.RFID.CS.exe=2</Custom>
-      <Custom Action="UnInstallService" After="UnInstallServiceSetProp">$IS.RFID.CS.exe=2</Custom>
+		<Condition Message='!(loc.NetFrameworkMinimum)'><![CDATA[Installed OR WIX_IS_NETFRAMEWORK_40_OR_LATER_INSTALLED]]></Condition>
+		<Condition Message="!(loc.WindowsVersion)"><![CDATA[Installed OR VersionNT >= 601]]></Condition>
+		<Condition Message="!(loc.Privileged)">Privileged</Condition>
 
-      <Custom Action="CommitServiceSetProp" After="RollbackService">$IS.RFID.CS.exe&gt;2</Custom>
-      <Custom Action="CommitService" After="CommitServiceSetProp">$IS.RFID.CS.exe&gt;2</Custom>
+		<WixVariable Id="WixUIBannerBmp" Value="logo_wix.bmp" />
+		<WixVariable Id="WixUIDialogBmp" Value="image_wix.bmp" />
+		<WixVariable Id="WixUILicenseRtf" Value="License.rtf"/>
 
-      <Custom Action="RollbackServiceSetProp" After="InstallService">$IS.RFID.CS.exe&gt;2</Custom>
-      <Custom Action="RollbackService" After="RollbackServiceSetProp">$IS.RFID.CS.exe&gt;2</Custom>
-    </InstallExecuteSequence>
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFilesFolder">
+				<Directory Id="ManufacturedFolder" Name="$(var.Manufactured)">
+					<Directory Id="INSTALLFOLDER" Name="$(var.appName)">
+						<Component Id="IS.RFID.CS.exe" Guid="*">
+							<File Id="WindowsService" Name="$(var.IS.RFID.CS.TargetFileName)" Source="$(var.IS.RFID.CS.TargetPath)" DiskId="1"/>
+							<File Id="WindowsServiceConfig" Name="$(var.IS.RFID.CS.TargetFileName).config" Source="$(var.IS.RFID.CS.TargetPath).config" DiskId="1"/>
+							<File Id="WindowsServiceManifest" Name="IS.RFID.Plugins.Manifest" Source="$(var.IS.RFID.CS.ProjectDir)IS.RFID.Plugins.manifest" DiskId="1"/>
+						  <File Id="WindowsServiceTestManifest" Name="$(var.IS.RFID.Service.TargetName).Manifest" Source="$(var.IS.RFID.Service.TargetDir)$(var.IS.RFID.Service.TargetName).manifest" DiskId="1"/>
+						</Component>
+					</Directory>
+				</Directory>
+			</Directory>
+		</Directory>
 
-  </Product>
+		<Feature Id="ProductFeature" Title="$(var.appName)" Absent="disallow" AllowAdvertise="no">
+			<Feature Id="RFID.IDLogic" Title="IDLogic" Level="5" Absent="allow" AllowAdvertise="no" InstallDefault="source">
+				<ComponentGroupRef Id="IS.RFID.IDLogic"/>
+				<Feature Id="RFID.IDLogic.Content" Title="External Dll's" Level="10" Absent="allow" AllowAdvertise="no">
+					<ComponentGroupRef Id="IS.RFID.IDLogic.External"/>
+				</Feature>
+			</Feature>
+			<Feature Id="RFID.Bibliotheca" Title="Bibliotheca" Level="5" Absent="allow" AllowAdvertise="no" InstallDefault="source">
+				<ComponentGroupRef Id="IS.RFID.Bibliotheca"/>
+			</Feature>
+			<Feature Id="RFID.SmartCard" Title="HID OmniKey" Level="5" Absent="allow" AllowAdvertise="no" InstallDefault="source">
+				<ComponentGroupRef Id="IS.RFID.SmartCard"/>
+			</Feature>
+			<ComponentGroupRef Id="Product.Generated" />
+			<ComponentGroupRef Id="IS.Interface.Log"/>
+			<ComponentGroupRef Id="IS.RFID.CS.WebSocket"/>
+			<ComponentRef Id="IS.RFID.CS.exe"/>
+		</Feature>
+
+		<Binary Id="InstallUtil" SourceFile="C:\Windows\Microsoft.NET\Framework\v4.0.30319\InstallUtilLib.dll"/>
+		<CustomAction Id='InstallServiceSetProp' Property='InstallService' Value=' /installtype=notransaction /action=install /LogFile="[#WindowsService]".log /unattended "[#WindowsService]" "[#WindowsServiceConfig]"' />
+		<CustomAction Id='InstallService' BinaryKey='InstallUtil' DllEntry='ManagedInstall' Execute='deferred' Impersonate='no'/>
+		<CustomAction Id='UnInstallServiceSetProp' Property='UnInstallService' Value=' /installtype=notransaction /action=uninstall /LogFile="[#WindowsService]".log /unattended "[#WindowsService]" "[#WindowsServiceConfig]"' />
+		<CustomAction Id='UnInstallService' BinaryKey='InstallUtil' DllEntry='ManagedInstall' Execute='deferred' Impersonate='no'/>
+		<CustomAction Id='CommitServiceSetProp' Property='CommitService' Value=' /installtype=notransaction /action=commit /LogFile="[#WindowsService]".log /unattended "[#WindowsService]" "[#WindowsServiceConfig]"' />
+		<CustomAction Id='CommitService' BinaryKey='InstallUtil' DllEntry='ManagedInstall' Execute='commit' />
+		<CustomAction Id='RollbackServiceSetProp' Property='RollbackService' Value=' /installtype=notransaction /action=rollback /LogFile="[#WindowsService]".log /unattended "[#WindowsService]" "[#WindowsServiceConfig]"' />
+		<CustomAction Id='RollbackService' BinaryKey='InstallUtil' DllEntry='ManagedInstall' Execute='rollback' />
+		<InstallExecuteSequence>
+			<Custom Action="InstallServiceSetProp" After="InstallFiles">$IS.RFID.CS.exe&gt;2</Custom>
+			<Custom Action="InstallService" After="InstallServiceSetProp">$IS.RFID.CS.exe&gt;2</Custom>
+
+			<Custom Action="UnInstallServiceSetProp" Before="StopServices">$IS.RFID.CS.exe=2</Custom>
+			<Custom Action="UnInstallService" After="UnInstallServiceSetProp">$IS.RFID.CS.exe=2</Custom>
+
+			<Custom Action="CommitServiceSetProp" After="RollbackService">$IS.RFID.CS.exe&gt;2</Custom>
+			<Custom Action="CommitService" After="CommitServiceSetProp">$IS.RFID.CS.exe&gt;2</Custom>
+
+			<Custom Action="RollbackServiceSetProp" After="InstallService">$IS.RFID.CS.exe&gt;2</Custom>
+			<Custom Action="RollbackService" After="RollbackServiceSetProp">$IS.RFID.CS.exe&gt;2</Custom>
+		</InstallExecuteSequence>
+
+	</Product>
 
 </Wix>

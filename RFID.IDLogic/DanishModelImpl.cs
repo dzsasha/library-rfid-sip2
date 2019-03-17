@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using IS.Interface;
 using IS.Interface.RFID;
+using System.IO;
 
 namespace IS.RFID.IDLogic
 {
@@ -20,50 +21,45 @@ namespace IS.RFID.IDLogic
 			_fields.Add(new FieldImpl() { Name = "CountryLibrary", Type = TypeField.String, Value = "" });
 			_fields.Add(new FieldImpl() { Name = "ISIL", Type = TypeField.String, Value = "" });
 		}
-        public DanishModelImpl(string id, string dm) : base(TypeModel.Danish)
-        {
-            _id = id;
-            IsInited = true;
-            _fields.Add(new FieldImpl() { Name = "PartsinItem", Type = TypeField.String, Value = dm.Split(';')[1] });
-            _fields.Add(new FieldImpl() { Name = "PartNumber", Type = TypeField.String, Value = dm.Split(';')[2] });
-            _fields.Add(new FieldImpl() { Name = "PrimaryItemId", Type = TypeField.String, Value = dm.Split(';')[3] });
-            _fields.Add(new FieldImpl() { Name = "CountryLibrary", Type = TypeField.String, Value = dm.Split(';')[4] });
-            _fields.Add(new FieldImpl() { Name = "ISIL", Type = TypeField.String, Value = dm.Split(';')[5] });
-            Type = StringToType(dm.Split(';')[0]);
-        }
-        private string _id { get; set; }
 
         internal IField GetField(string name)
 		{
 			return _fields.FirstOrDefault(field => field.Name.Equals(name));
 		}
 
-		internal static DanishModelImpl Default(string id, IEnumerable<IField> param)
+		internal static DanishModelImpl Default(string id, IConfig config)
 		{
-			DanishModelImpl pRet = new DanishModelImpl() {Id = id, Type =  TypeItem.Item, IsInited = false};
-            pRet._id = id;
-			(pRet as ModelImpl).Id = id;
-			foreach (IField field in param)
-			{
-				switch (field.Name)
-				{
-					case "Country":
-						pRet.SCountryLibrary = field.Value.ToString();
-						break;
-					case "ISIL":
-						pRet.SIsil = field.Value.ToString();
-						break;
-				}
-			}
-			return pRet;
-		}
+            DanishModelImpl pRet = null;
+            try
+            {
+                pRet = new DanishModelImpl() { Id = id, Type = TypeItem.Item, IsInited = false };
+                (pRet as ModelImpl).Id = id;
+                foreach (IField field in config.Fields)
+                {
+                    switch (field.Name)
+                    {
+                        case "Country":
+                            pRet.SCountryLibrary = field.Value.ToString();
+                            break;
+                        case "ISIL":
+                            pRet.SIsil = field.Value.ToString();
+                            break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.For(pRet).Error(pRet, ex);
+            }
+            return pRet;
+        }
 
-		/// <summary>
-		/// Получение значения по типу метки
-		/// </summary>
-		/// <param name="type">тип метки</param>
-		/// <returns>значение типа метки</returns>
-		internal static string TypeToString(TypeItem type)
+        /// <summary>
+        /// Получение значения по типу метки
+        /// </summary>
+        /// <param name="type">тип метки</param>
+        /// <returns>значение типа метки</returns>
+        internal static string TypeToString(TypeItem type)
 		{
 			switch (type)
 			{
@@ -98,17 +94,22 @@ namespace IS.RFID.IDLogic
         }
         public override void Write()
 		{
-			Externals.WriteModel(_id, this);
+			Externals.WriteModel((this as ModelImpl).Id, this);
 		}
-		#endregion
+        #endregion
 
-		#region implementation interface IModel
-		private readonly List<IField> _fields = new List<IField>();
-		public IField[] Fields
-		{
-			get { return _fields.ToArray(); }
-		}
-		#endregion
+        public override ModelImpl[] Read(string id)
+        {
+            (this as ModelImpl).Id = id;
+            return (new List<ModelImpl> { Externals.ReadModel(id, this) }).ToArray();
+        }
+
+
+        #region implementation interface IModel
+        private readonly List<IField> _fields = new List<IField>();
+		public IField[] Fields => _fields.ToArray();
+
+	    #endregion
 
 		#region For external
 		internal string STypeUsage

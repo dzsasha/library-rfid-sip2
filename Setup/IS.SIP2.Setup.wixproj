@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" InitialTargets="EnsureWixToolsetInstalled" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\WiX.4.0.0.5512-pre\build\wix.props" Condition="Exists('..\packages\WiX.4.0.0.5512-pre\build\wix.props')" />
+  <PropertyGroup>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>3.9</ProductVersion>
+    <ProjectGuid>{b2573d19-1021-4ded-9028-d471af9687fe}</ProjectGuid>
+    <SchemaVersion>2.0</SchemaVersion>
+    <OutputName>marc.cloud.sip2</OutputName>
+    <OutputType>Package</OutputType>
+    <Name>IS.RFID.Setup</Name>
+    <OutputPath>..\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>..\$(Configuration)\</IntermediateOutputPath>
+    <Cultures>ru-RU</Cultures>
+    <EnableProjectHarvesting>True</EnableProjectHarvesting>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <WixToolPath>$(WixInstallPath)</WixToolPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="cloud.sip2.wxs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Image_wix.bmp" />
+    <Content Include="IS.wxi" />
+    <Content Include="License.rtf" />
+    <Content Include="logo_wix.bmp" />
+    <Content Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="IS.ru-ru.wxl" />
+  </ItemGroup>
+  <ItemGroup>
+    <WixExtension Include="WixUtilExtension">
+      <HintPath>$(WixExtDir)\WixUtilExtension.dll</HintPath>
+      <Name>WixUtilExtension</Name>
+    </WixExtension>
+    <WixExtension Include="WixUIExtension">
+      <HintPath>$(WixExtDir)\WixUIExtension.dll</HintPath>
+      <Name>WixUIExtension</Name>
+    </WixExtension>
+    <WixExtension Include="WixNetFxExtension">
+      <HintPath>$(WixExtDir)\WixNetFxExtension.dll</HintPath>
+      <Name>WixNetFxExtension</Name>
+    </WixExtension>
+  </ItemGroup>
+  <ItemGroup>
+    <HarvestFile Include="$(IntermediateOutputPath)\log4net.dll">
+      <Link>External\log4net.dll</Link>
+      <ComponentGroupName>IS.Interface.Log</ComponentGroupName>
+      <DirectoryRefId>INSTALLFOLDER</DirectoryRefId>
+      <PreprocessorVariable>var.IS.Interface.TargetDir</PreprocessorVariable>
+      <SuppressRootDirectory>True</SuppressRootDirectory>
+    </HarvestFile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Interface\IS.Interface.csproj">
+      <Name>IS.Interface</Name>
+      <Project>{46bf13ec-edaa-445c-b108-ce20be5a2c8a}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>
+      </DoNotHarvest>
+      <RefProjectOutputGroups>Binaries</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\SIP2.Cloud\IS.SIP2.Cloud.csproj">
+      <Name>IS.SIP2.Cloud</Name>
+      <Project>{e7c5aa2b-500c-41ae-947b-3f2979a4a454}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>
+      </DoNotHarvest>
+      <RefProjectOutputGroups>Binaries</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\SIP2.CS\IS.SIP2.CS.csproj">
+      <Name>IS.SIP2.CS</Name>
+      <Project>{5bd23a89-0906-4daf-84ea-349ecdb21cf5}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>
+      </DoNotHarvest>
+      <RefProjectOutputGroups>Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="External\" />
+  </ItemGroup>
+  <Import Project="$(WixTargetsPath)" Condition=" Exists('$(WixTargetsPath)') " />
+  <Target Name="EnsureWixToolsetInstalled" Condition=" !Exists('$(WixTargetsPath)') ">
+    <Error Text="The WiX Toolset v4 build tools must be installed to build this project. To download the WiX Toolset v4, see http://wixtoolset.org/releases/" />
+  </Target>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\WiX.4.0.0.5512-pre\build\wix.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\WiX.4.0.0.5512-pre\build\wix.props'))" />
+  </Target>
+  <!--
+  <Target Name="BeforeBuild">
+    <MSBuild Projects="%(ProjectReference.FullPath)" Targets="Compile" Properties="Configuration=$(Configuration);Platform=x86;OutDir=$(IntermediateOutputPath)" />
+    <HeatDirectory ToolPath="$(WixInstallPath)" Directory="$(IntermediateOutputPath)" OutputFile="$(IntermediateOutputPath)$(ProjectName).wxs" PreprocessorVariable="var.Directory" ComponentGroupName="cg.marc.cloud.rfid" DirectoryRefId="INSTALLFOLDER" AutoGenerateGuids="True" GenerateGuidsNow="True" SuppressFragments="True" SuppressRootDirectory="True" />
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <!--
+    -->
+</Project>
