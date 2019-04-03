@@ -23,7 +23,6 @@ namespace IS.SIP2.Cloud {
                 response.Version = request.Version;
                 config.Version = request.Version;
                 response.InstitutionId = Convert.ToString(config.param.GetField("InstitutionId").Value);
-                config.Version = response.Version;
                 try {
                     config.AddParam(new FieldImpl() { Name = "MaxPrintWidth", Type = TypeField.Integer, Value = request.MaxPrintWidth });
                     response.Date = DateTime.Now;

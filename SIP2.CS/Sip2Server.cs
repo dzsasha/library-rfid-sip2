@@ -15,10 +15,8 @@ namespace IS.SIP2.CS {
         private Socket _listener = null;
         private readonly SocketAsyncEventArgs _acceptArgs = new SocketAsyncEventArgs();
         private ISip2 _sip2Client = null;
-        private ISip2Config _config = null;
         private ServiceSection _serviceSection = null;
         public Sip2Server(ServiceSection config) {
-            _config = new Sip2ConfigImpl(config.Answers.Params, config.Answers.Debug, config.Answers.Separator);
             _serviceSection = config;
             _acceptArgs.Completed += new EventHandler<SocketAsyncEventArgs>(AcceptEventArg_Completed);
         }
@@ -29,7 +27,7 @@ namespace IS.SIP2.CS {
                 if ((_sip2Client = (ISip2)Activator.CreateInstance(typeStart)) == null) {
                     throw new NullReferenceException();
                 } else {
-                    if (!_sip2Client.init(_config)) {
+                    if (!_sip2Client.init(_serviceSection.Answers)) {
                         throw new InvalidOperationException();
                     } else {
                         _sip2Client.OnError += Sip2Client_OnError;
@@ -67,20 +65,20 @@ namespace IS.SIP2.CS {
                             var buffer = new byte[4096];
                             var byteReads = await Task.Factory.FromAsync(socket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, null, socket), socket.EndReceive).ConfigureAwait(false);
                             if (byteReads > 0) {
-                                foreach (string sb in Encoding.UTF8.GetString(buffer, 0, byteReads).Split(new char[] { '\r' }, StringSplitOptions.RemoveEmptyEntries)) {
+                                foreach (string sb in _serviceSection.Answers.encoding.GetString(buffer, 0, byteReads).Split(new char[] { '\r' }, StringSplitOptions.RemoveEmptyEntries)) {
                                     Log.For(this).DebugFormat("ReceiveAsync from {0}: {1}", socket.LocalEndPoint.ToString(), sb);
                                     OnReceive?.Invoke(socket, new Sip2MessageEventArgs(sb));
                                     if (!Sip2AnswerImpl.verify(sb)) {
                                         throw new Exception("error checksum");
                                     }
-                                    string strSend = _sip2Client.doMessage(sb, _config);
+                                    string strSend = _sip2Client.doMessage(sb, _serviceSection.Answers);
                                     if (!Sip2AnswerImpl.verify(strSend)) {
                                         throw new Exception("error checksum");
                                     }
-                                    if (!String.IsNullOrEmpty(strSend) && socket.Send(Encoding.UTF8.GetBytes(strSend)) > 0 && OnSend != null) {
+                                    if (!String.IsNullOrEmpty(strSend) && socket.Send(_serviceSection.Answers.encoding.GetBytes(strSend)) > 0) {
                                         socket.Send(new byte[] { 0x0D });
                                         Log.For(this).DebugFormat("send: {0}", strSend);
-                                        OnSend(socket, new Sip2MessageEventArgs(strSend));
+                                        OnSend?.Invoke(socket, new Sip2MessageEventArgs(strSend));
                                     }
                                 }
                             }

@@ -78,7 +78,6 @@
     <Compile Include="RFID\TypeModelImpl.cs" />
     <Compile Include="SIP2\ILogin.cs" />
     <Compile Include="SIP2\IItemStatusUpdate.cs" />
-    <Compile Include="SIP2\Sip2ConfigImpl.cs" />
     <Compile Include="SIP2\Sip2IdentificatorAttribute.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -4,14 +4,17 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
-using System.Net;
+using System.Text;
 using System.Net.Sockets;
 using IS.Interface;
 using IS.Interface.SIP2;
 
 namespace IS.SIP2.CS {
-    public class ParamsCollection : ConfigurationElementCollection {
-        public ParamsCollection() { }
+    public class ParamsCollection : ConfigurationElementCollection, ISip2Config {
+        public ParamsCollection() {
+            Version = Sip2Version.V200;
+        }
+        List<IField> _result = new List<IField>();
         #region ConfigurationElementCollection
         protected override ConfigurationElement CreateNewElement() {
             return new ParamElement();
@@ -39,6 +42,11 @@ namespace IS.SIP2.CS {
         public void RemoveAt(int index) {
             BaseRemoveAt(index);
         }
+
+        public void AddParam(IField field) {
+            _result.Add(field);
+        }
+
         public ParamElement this[int index] {
             get { return (ParamElement)BaseGet(index); }
             set {
@@ -69,7 +77,7 @@ namespace IS.SIP2.CS {
             set { base["address"] = value; }
         }
         [ConfigurationProperty("debug", DefaultValue = true)]
-        public Boolean Debug {
+        public Boolean isDebug {
             get { return Convert.ToBoolean(base["debug"]); }
             set { base["debug"] = value; }
         }
@@ -83,6 +91,20 @@ namespace IS.SIP2.CS {
             get { return Convert.ToChar(base["separator"]); }
             set { base["separator"] = value; }
         }
-        public IField[] Params => this.Cast<IField>().ToArray();
+        [ConfigurationProperty("encoding", DefaultValue = "65001")]
+        private Int32 _encoding {
+            get { return Convert.ToInt32(base["encoding"]); }
+            set { base["encoding"] = value; }
+        }
+        public Encoding encoding => Encoding.GetEncoding(_encoding);
+        public Sip2Version Version { get; set; }
+        public IField[] param {
+            get {
+                List<IField> result = new List<IField>();
+                result.AddRange(this.Cast<IField>().ToArray());
+                result.AddRange(_result);
+                return result.ToArray();
+            }
+        }
     }
 }

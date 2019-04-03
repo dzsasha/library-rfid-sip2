@@ -29,6 +29,7 @@ namespace IS.SIP2.Cloud {
                 throw new Exception("CoreExt.GetAnswer", new ArgumentNullException("app.config not param 'server'"));
             }
             using (WebClient client = new WebClient()) {
+                client.Encoding = Encoding.UTF8;
                 string strMessage = Serializer.SerializeObject(message, typeof(T));
                 Log.For(message).DebugFormat("GetAnswer -> : {0}", strMessage);
                 string strAnswer = client.UploadString(Convert.ToString(param.GetField("server").Value), strMessage);
