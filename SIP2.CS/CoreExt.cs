@@ -21,9 +21,15 @@ namespace IS.SIP2.CS {
             result.Position = 0;
             return result;
         }
-        internal static string doMessage(this ISip2 server, string message, ISip2Config config) {
+        internal static string doMessage(this ISip2 server, string message, ISip2Config config, ref string lastCmd) {
             ISip2Request request = null;
             ISip2Response response = null;
+            string msg = message;
+            if (((Sip2Request)Convert.ToInt32(message.Substring(0, 2))).Equals(Sip2Request.scRequestACSResend)) {
+                msg = lastCmd;
+            } else {
+                lastCmd = message;
+            }
             foreach (var cmd in server.commands) {
                 foreach (var typeCmd in cmd.GetType().FindInterfaces((Type a, object obj) => {
                     Sip2IdentificatorAttribute attr = a.GetCustomAttribute<Sip2IdentificatorAttribute>();
@@ -49,10 +55,10 @@ namespace IS.SIP2.CS {
                         return true;
                     }
                     return false;
-                }, (Sip2Request)Convert.ToInt32(message.Substring(0, 2)))) {
+                }, (Sip2Request)Convert.ToInt32(msg.Substring(0, 2)))) {
                     foreach (var typeImpl in typeCmd.FindInterfaces((Type a, object obj) => { return a.GetMethod("execute") != null; }, null)) {
                         IFormatter formatter = new Sip2Formatter(request, config);
-                        using (Stream stream = message.Substring(2).GetStream()) {
+                        using (Stream stream = msg.Substring(2).GetStream()) {
                             request = (ISip2Request)formatter.Deserialize(stream);
                         }
                         if (request != null) {

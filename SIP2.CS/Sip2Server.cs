@@ -60,6 +60,7 @@ namespace IS.SIP2.CS {
         public async Task ReceiveAsync(Socket socket) {
             if (socket != null) {
                 new Thread(async () => {
+                    string lastCmd = "";
                     while (socket.Connected) {
                         try {
                             var buffer = new byte[4096];
@@ -71,8 +72,10 @@ namespace IS.SIP2.CS {
                                     if (!Sip2AnswerImpl.verify(sb)) {
                                         throw new Exception("error checksum");
                                     }
-                                    string strSend = _sip2Client.doMessage(sb, _serviceSection.Answers);
-                                    if (!Sip2AnswerImpl.verify(strSend)) {
+                                    string strSend = _sip2Client.doMessage(sb, _serviceSection.Answers, ref lastCmd);
+                                    if (String.IsNullOrEmpty(strSend)) {
+                                        strSend = Sip2Response.acRequestSCResend.ToString("D");
+                                    } else if (!Sip2AnswerImpl.verify(strSend)) {
                                         throw new Exception("error checksum");
                                     }
                                     if (!String.IsNullOrEmpty(strSend) && socket.Send(_serviceSection.Answers.encoding.GetBytes(strSend)) > 0) {

@@ -44,6 +44,10 @@ namespace IS.Interface.SIP2 {
         /// Символ-разграничитель для полей переменной длинны
         /// </summary>
         Char Separator { get; }
+        /// <summary>
+        /// Кодировка по умолчанию
+        /// </summary>
+        Encoding encoding { get; }
     }
     /// <summary>
     /// Общий интрейс сообщений

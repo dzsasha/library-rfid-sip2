@@ -66,14 +66,14 @@ namespace IS.SIP2.CS.SIP2 {
         public void Serialize(Stream serializationStream, object graph) {
             Sip2IdentificatorAttribute idAttr = graph.GetType().GetCustomAttributes<Sip2IdentificatorAttribute>().FirstOrDefault();
             if (idAttr != null) {
-                serializationStream.Write(Encoding.UTF8.GetBytes(((int)idAttr.response).ToString("D2")), 0, 2);
+                serializationStream.Write(_config.encoding.GetBytes(((int)idAttr.response).ToString("D2")), 0, 2);
             }
             foreach (PropertyDescriptor prop in TypeDescriptor.GetProperties(graph).Sort(new FieldComparer())) {
                 Sip2FieldAttribute attr = prop.Attributes.OfType<Sip2FieldAttribute>().First();
                 if (attr != null && attr.Version <= _config.Version) {
                     if (((_config.isDebug && attr.Order < 101) || (!_config.isDebug && attr.Order < 100))) {
                         string strSerialize = attr.Serialize(prop.GetValue(graph), _config.Separator);
-                        foreach (byte bt in Encoding.UTF8.GetBytes(strSerialize)) {
+                        foreach (byte bt in _config.encoding.GetBytes(strSerialize)) {
                             serializationStream.WriteByte(bt);
                         }
                     }

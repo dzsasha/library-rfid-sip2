@@ -1,12 +1,9 @@
 ﻿using IS.Interface.SIP2;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Reflection;
 using System.ComponentModel;
 using System.Globalization;
+using System.Configuration;
 
 namespace IS.SIP2.CS.SIP2 {
     public class Sip2AnswerImpl : ISip2Answer {
@@ -33,12 +30,13 @@ namespace IS.SIP2.CS.SIP2 {
             return chsum.Equals(sum);
         }
         internal class CheckSumImpl : ISip2Serialize, ISip2Deserialize {
+            private static ISip2Config _config = ((ServiceSection)ConfigurationManager.GetSection(ServiceSection.SectionName)).Answers;
             public object Deserialize(PropertyDescriptor prop, string value) {
                 return Int32.Parse(value, NumberStyles.HexNumber);
             }
             public string checksum(string str) {
                 uint result = 0;
-                foreach (byte bt in Encoding.UTF8.GetBytes(str)) {
+                foreach (byte bt in _config.encoding.GetBytes(str)) {
                     result += bt;
                 }
                 result = result & 0xFFFF;
