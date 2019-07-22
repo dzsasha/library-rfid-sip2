@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using IS.Interface;
 
 namespace IS.RFID.Bibliotheca {
@@ -13,12 +12,28 @@ namespace IS.RFID.Bibliotheca {
             _fields.Add(new FieldImpl() { Name = "Library", Type = TypeField.String, Value = "" });
             _fields.Add(new FieldImpl() { Name = "Country", Type = TypeField.String, Value = "" });
         }
-        public DanishModelImpl(int iIndex) : this() {
+        public DanishModelImpl(int iIndex, DanishModelImpl iDefault) : this() {
             Index = iIndex;
             Id = External.BibGetItemID(Index);
             if (!String.IsNullOrEmpty(Id)) {
-                Library = External.BibGetLibraryInstitutionID(Index);
-                Country = External.BibGetLibraryCountryID(Index);
+                try {
+                    Library = External.BibGetLibraryInstitutionID(Index);
+                } catch (RfidException ex) {
+                    if(ex.Code.Equals(-403)) {
+                        Library = iDefault.Library;
+                    } else {
+                        throw ex;
+                    }
+                }
+                try {
+                    Country = External.BibGetLibraryCountryID(Index);
+                } catch (RfidException ex) {
+                    if (ex.Code.Equals(-403)) {
+                        Country = iDefault.Country;
+                    } else {
+                        throw ex;
+                    }
+                }
                 if (Convert.ToBoolean(External.BibGetIsItemLabel(Index))) Type = TypeItem.Item;
                 else if (Convert.ToBoolean(External.BibGetIsUserCard(Index))) Type = TypeItem.Person;
                 else Type = TypeItem.Unknown;

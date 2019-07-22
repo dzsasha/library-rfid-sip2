@@ -38,7 +38,7 @@ namespace IS.RFID.IDLogic {
                     case 3: errorMessage = "Невалидная модель данных"; break;
                     case 0: errorMessage = "Ошибки команд КАШВ оборудования"; break;
                 }
-                throw new RfidException(errorMessage);
+                throw new RfidException(errorMessage, iError);
             }
         }
 

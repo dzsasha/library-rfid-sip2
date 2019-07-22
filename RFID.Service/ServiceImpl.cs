@@ -102,11 +102,11 @@ namespace IS.RFID.Service {
         #region public function
         public IItem[] GetItems() {
             try {
+                _items.Clear();
                 foreach (ReaderImpl reader in _readers) {
-                    _items.Clear();
                     _items.AddRange(Readers[reader.Name].Items);
                 }
-            } catch (System.Exception ex) {
+            } catch (Exception ex) {
                 Log.For(this).Error("ServiceImpl:GetItems() - {0}", ex);
                 throw ex;
             }

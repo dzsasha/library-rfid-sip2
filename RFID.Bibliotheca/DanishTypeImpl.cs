@@ -1,9 +1,6 @@
 ﻿using IS.Interface;
 using IS.Interface.RFID;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace IS.RFID.Bibliotheca {
     public class DanishTypeImpl : TypeModelImpl<DanishModelImpl>, ITypeModel {
@@ -11,7 +8,7 @@ namespace IS.RFID.Bibliotheca {
             _param = param;
             _Index = iIndex;
             if (External.BibGetDataModelID(_Index) > 0) {
-                Add(new DanishModelImpl(_Index));
+                Add(new DanishModelImpl(_Index, (Default as DanishModelImpl)));
             }
         }
         private readonly IEnumerable<IField> _param = null;

@@ -32,7 +32,7 @@ namespace IS.RFID.Bibliotheca {
                     case -407: errorMessage = "too much data for tag"; break;
                     case -408: errorMessage = "XOR check failed in extension n"; break;
                 }
-                throw new RfidException(errorMessage);
+                throw new RfidException(errorMessage, iValue);
             } else return iValue;
         }
         [DllImport(lib_name, EntryPoint = "BibOpenReader")]
