@@ -12,22 +12,22 @@ namespace IS.SIP2.CS.SIP2 {
         /// <summary>
         /// завершение сеанса
         /// </summary>
-        [Sip2Field(1, Required = true, Version = Sip2Version.V200, Default = true, Description = "завершение сеанса")]
+        [Sip2Field(1, 1, Required = true, Version = Sip2Version.V200, Default = true, Description = "завершение сеанса")]
         public bool EndSession { get; set; }
         /// <summary>
         /// дата операции
         /// </summary>
-        [Sip2Field(2, Required = true, Description = "дата операции")]
+        [Sip2Field(2, 18, Required = true, Description = "дата операции")]
         public DateTime Date { get; set; }
         /// <summary>
         /// идентификатор учреждения
         /// </summary>
-        [Sip2Field(3, Required = true, Identificator = "AO", Description = "идентификатор учреждения")]
+        [Sip2Field(Required = true, Identificator = "AO", Description = "идентификатор учреждения", Order = 3)]
         public string InstitutionId { get; set; }
         /// <summary>
         /// идентификатор абонента
         /// </summary>
-        [Sip2Field(4, Required = true, Identificator = "AA", Description = "идентификатор абонента")]
+        [Sip2Field(Required = true, Identificator = "AA", Description = "идентификатор абонента", Order = 4)]
         public string PatronIdentifier { get; set; }
     }
 }

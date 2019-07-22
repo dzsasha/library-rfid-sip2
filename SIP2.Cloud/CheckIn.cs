@@ -38,7 +38,7 @@ namespace IS.SIP2.Cloud {
                                 Log.For(this).ErrorFormat("ERROR!!! CheckIn: {0}", new Exception((item as Problem).ProblemDetail));
                             }
                         }
-                        response.Resensitize = !response.Ok;
+                        response.Resensitize = response.Ok;
                         response.MagneticMedia = false;
                         response.Alert = false;
                         response.Date = DateTime.Now;

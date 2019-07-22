@@ -12,27 +12,27 @@ namespace IS.SIP2.CS.SIP2 {
         /// <summary>
         /// код места расположения
         /// </summary>
-        [Sip2Field(5, Version = Sip2Version.V200, Identificator = "CP", Description = "код места расположения")]
+        [Sip2Field(Version = Sip2Version.V200, Identificator = "CP", Description = "код места расположения", Order = 5)]
         public string LocationCode { get; set; }
         /// <summary>
         /// пароль для входа
         /// </summary>
-        [Sip2Field(4, Required = true, Version = Sip2Version.V200, Identificator = "CO", Description = "пароль для входа")]
+        [Sip2Field(Required = true, Version = Sip2Version.V200, Identificator = "CO", Description = "пароль для входа", Order = 4)]
         public string Password { get; set; }
         /// <summary>
         /// алгоритм парол.
         /// </summary>
-        [Sip2Field(2, Length = 1, Version = Sip2Version.V200, Description = "алгоритм парол.")]
+        [Sip2Field(2, 1, Version = Sip2Version.V200, Description = "алгоритм парол.")]
         public char PWDalgorihtm { get; set; }
         /// <summary>
         /// алгоритм идент. польз.
         /// </summary>
-        [Sip2Field(1, Version = Sip2Version.V200, Length = 1, Description = "алгоритм идент. польз.")]
+        [Sip2Field(1, 1, Version = Sip2Version.V200, Description = "алгоритм идент. польз.")]
         public char UIDalgorithm { get; set; }
         /// <summary>
         /// идентификатор пользователя для входа
         /// </summary>
-        [Sip2Field(3, Required = true, Version = Sip2Version.V200, Identificator = "CN", Description = "идентификатор пользователя для входа")]
+        [Sip2Field(Required = true, Version = Sip2Version.V200, Identificator = "CN", Description = "идентификатор пользователя для входа", Order = 3)]
         public string UserID { get; set; }
     }
 }

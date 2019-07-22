@@ -94,7 +94,6 @@
     <Compile Include="SIP2\CheckInResponseImpl.cs" />
     <Compile Include="SIP2\CheckOutRequestImpl.cs" />
     <Compile Include="SIP2\CheckOutResponseImpl.cs" />
-    <Compile Include="SIP2\Delegates.cs" />
     <Compile Include="SIP2\EndPatronSessionRequestImpl.cs" />
     <Compile Include="SIP2\EndPatronSessionResponseImpl.cs" />
     <Compile Include="SIP2\ItemInformationResponseImpl.cs" />
@@ -111,12 +110,14 @@
     <Compile Include="SIP2\RenewAllResponseImpl.cs" />
     <Compile Include="SIP2\RenewRequestImpl.cs" />
     <Compile Include="SIP2\RenewResponseImpl.cs" />
+    <Compile Include="SIP2\ResendImpl.cs" />
     <Compile Include="SIP2\SCStatusRequestImpl.cs" />
     <Compile Include="SIP2\SCStatusResponseImpl.cs" />
     <Compile Include="SIP2\Sip2AnswerImpl.cs" />
     <Compile Include="SIP2\Sip2FieldAttribute.cs" />
     <Compile Include="SIP2\Sip2Formatter.cs" />
     <Compile Include="SIP2\Sip2ResponsePrintImpl.cs" />
+    <Compile Include="SIP2\Sip2SerializeImpl.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">

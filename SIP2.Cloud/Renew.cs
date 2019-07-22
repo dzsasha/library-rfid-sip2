@@ -35,8 +35,8 @@ namespace IS.SIP2.Cloud {
                             }
                         }
                     }
-                    response.Ok = true;
-                    response.RenewalOk = true;
+                    response.Ok = isSucceeded;
+                    response.RenewalOk = isSucceeded;
                     response.MagneticMedia = false;
                     response.Desensitize = false;
                     response.Date = DateTime.Now;

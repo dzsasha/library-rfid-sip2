@@ -37,6 +37,7 @@ namespace IS.SIP2.CS {
                         _listener.Bind(localEndPoint);
                         _listener.Listen(_serviceSection.Answers.MaxConnection);
                         AcceptAsync(_acceptArgs);
+                        OnStart?.Invoke(this, new EventArgs());
                     }
                 }
             } catch (Exception ex) {
@@ -72,21 +73,23 @@ namespace IS.SIP2.CS {
                                     if (!Sip2AnswerImpl.verify(sb)) {
                                         throw new Exception("error checksum");
                                     }
-                                    string strSend = _sip2Client.doMessage(sb, _serviceSection.Answers, ref lastCmd);
-                                    if (String.IsNullOrEmpty(strSend)) {
-                                        strSend = Sip2Response.acRequestSCResend.ToString("D");
-                                    } else if (!Sip2AnswerImpl.verify(strSend)) {
+                                    lastCmd = _sip2Client.doMessage(sb, _serviceSection.Answers, ref lastCmd);
+                                    if (!Sip2AnswerImpl.verify(lastCmd)) {
                                         throw new Exception("error checksum");
                                     }
-                                    if (!String.IsNullOrEmpty(strSend) && socket.Send(_serviceSection.Answers.encoding.GetBytes(strSend)) > 0) {
+                                    if (socket.Send(_serviceSection.Answers.encoding.GetBytes(lastCmd)) > 0) {
                                         socket.Send(new byte[] { 0x0D });
-                                        Log.For(this).DebugFormat("send: {0}", strSend);
-                                        OnSend?.Invoke(socket, new Sip2MessageEventArgs(strSend));
+                                        Log.For(this).DebugFormat("send: {0}", lastCmd);
+                                        OnSend?.Invoke(socket, new Sip2MessageEventArgs(lastCmd));
                                     }
                                 }
                             }
                         } catch (Exception ex) {
                             Log.For(this).Error("ReceiveAsync", ex);
+                            String sSend = _sip2Client.doResend(_serviceSection.Answers);
+                            socket.Send(_serviceSection.Answers.encoding.GetBytes(sSend));
+                            socket.Send(new byte[] { 0x0D });
+                            OnSend?.Invoke(socket, new Sip2MessageEventArgs(sSend));
                             Sip2Client_OnError(this, new ErrorEventArgs(ex));
                         }
                     }
@@ -113,6 +116,7 @@ namespace IS.SIP2.CS {
         public event EventHandler<Sip2MessageEventArgs> OnReceive;
         public event EventHandler<Sip2MessageEventArgs> OnSend;
         public event ErrorEventHandler OnError;
+        public event EventHandler OnStart;
 
         #region implementation interface IDisposable
         public void Dispose() {

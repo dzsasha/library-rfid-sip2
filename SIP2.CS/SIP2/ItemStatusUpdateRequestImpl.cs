@@ -12,27 +12,27 @@ namespace IS.SIP2.CS.SIP2 {
         /// <summary>
         /// дата операции
         /// </summary>
-        [Sip2Field(1, Required = true, Description = "дата операции", Length = 18)]
+        [Sip2Field(1, 18, Required = true, Description = "дата операции", Length = 18)]
         public DateTime date { get; set; }
         /// <summary>
         /// идентификатор учреждения
         /// </summary>
-        [Sip2Field(2, Required = true, Identificator = "AO", Description = "идентификатор учреждения")]
+        [Sip2Field(Required = true, Identificator = "AO", Description = "идентификатор учреждения", Order = 2)]
         public string InstitutionId { get; set; }
         /// <summary>
         /// идентификатор единицы
         /// </summary>
-        [Sip2Field(3, Required = true, Identificator = "AB", Description = "идентификатор единицы")]
+        [Sip2Field(Required = true, Identificator = "AB", Description = "идентификатор единицы", Order = 3)]
         public string ItemIdentifier { get; set; }
         /// <summary>
         /// окончательный пароль
         /// </summary>
-        [Sip2Field(4, Identificator = "AC", Description = "окончательный пароль")]
+        [Sip2Field(Identificator = "AC", Description = "окончательный пароль", Order = 4)]
         public string TerminalPassword { get; set; }
         /// <summary>
         /// свойства единицы
         /// </summary>
-        [Sip2Field(5, Required = true, Identificator = "CH", Version = Sip2Version.V200, Description = "свойства единицы")]
+        [Sip2Field(Required = true, Identificator = "CH", Version = Sip2Version.V200, Description = "свойства единицы", Order = 5)]
         public string ItemProperties { get; set; }
     }
 }

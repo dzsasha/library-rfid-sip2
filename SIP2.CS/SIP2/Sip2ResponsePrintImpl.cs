@@ -10,12 +10,12 @@ namespace IS.SIP2.CS.SIP2 {
         /// <summary>
         /// печатная строка
         /// </summary>
-        [Sip2Field(99, Identificator = "AG", Description = "печатная строка")]
+        [Sip2Field(Identificator = "AG", Description = "печатная строка", Order = 99)]
         public string PrintLine { get; set; }
         /// <summary>
         /// экранное сообщение
         /// </summary>
-        [Sip2Field(98, Identificator = "AF", Description = "экранное сообщение")]
+        [Sip2Field(Identificator = "AF", Description = "экранное сообщение", Order = 98)]
         public string ScreenMessage { get; set; }
     }
 }

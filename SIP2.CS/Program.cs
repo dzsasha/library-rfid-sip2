@@ -24,7 +24,7 @@ namespace IS.SIP2.CS {
             } else {
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(new ServerLog((ServiceSection)ConfigurationManager.GetSection(ServiceSection.SectionName)));
+                Application.Run(new ServerLog((ServiceSection)ConfigurationManager.GetSection(ServiceSection.SectionName), args));
             }
         }
     }

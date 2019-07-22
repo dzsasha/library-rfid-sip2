@@ -31,7 +31,7 @@
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
-            this.tabControl = new System.Windows.Forms.TabControl();
+            this.tabClient = new System.Windows.Forms.TabControl();
             this.tabPageLog = new System.Windows.Forms.TabPage();
             this.textLog = new System.Windows.Forms.RichTextBox();
             this.tabPageConfig = new System.Windows.Forms.TabPage();
@@ -46,11 +46,15 @@
             this.numericPort = new System.Windows.Forms.NumericUpDown();
             this.textObject = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.tabControl.SuspendLayout();
+            this.tabPageClient = new System.Windows.Forms.TabPage();
+            this.btnSend = new System.Windows.Forms.Button();
+            this.textSend = new System.Windows.Forms.TextBox();
+            this.tabClient.SuspendLayout();
             this.tabPageLog.SuspendLayout();
             this.tabPageConfig.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericMax)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericPort)).BeginInit();
+            this.tabPageClient.SuspendLayout();
             this.SuspendLayout();
             // 
             // button1
@@ -86,18 +90,19 @@
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
-            // tabControl
+            // tabClient
             // 
-            this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.tabClient.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabControl.Controls.Add(this.tabPageLog);
-            this.tabControl.Controls.Add(this.tabPageConfig);
-            this.tabControl.Location = new System.Drawing.Point(12, 12);
-            this.tabControl.Name = "tabControl";
-            this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(237, 212);
-            this.tabControl.TabIndex = 4;
+            this.tabClient.Controls.Add(this.tabPageLog);
+            this.tabClient.Controls.Add(this.tabPageConfig);
+            this.tabClient.Controls.Add(this.tabPageClient);
+            this.tabClient.Location = new System.Drawing.Point(12, 12);
+            this.tabClient.Name = "tabClient";
+            this.tabClient.SelectedIndex = 0;
+            this.tabClient.Size = new System.Drawing.Size(237, 212);
+            this.tabClient.TabIndex = 4;
             // 
             // tabPageLog
             // 
@@ -253,7 +258,7 @@
             this.numericPort.Size = new System.Drawing.Size(135, 20);
             this.numericPort.TabIndex = 5;
             this.numericPort.Value = new decimal(new int[] {
-            1024,
+            6001,
             0,
             0,
             0});
@@ -276,12 +281,44 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "COM-server";
             // 
+            // tabPageClient
+            // 
+            this.tabPageClient.Controls.Add(this.btnSend);
+            this.tabPageClient.Controls.Add(this.textSend);
+            this.tabPageClient.Location = new System.Drawing.Point(4, 22);
+            this.tabPageClient.Name = "tabPageClient";
+            this.tabPageClient.Size = new System.Drawing.Size(229, 186);
+            this.tabPageClient.TabIndex = 2;
+            this.tabPageClient.Text = "Client";
+            this.tabPageClient.UseVisualStyleBackColor = true;
+            // 
+            // btnSend
+            // 
+            this.btnSend.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSend.Location = new System.Drawing.Point(3, 29);
+            this.btnSend.Name = "btnSend";
+            this.btnSend.Size = new System.Drawing.Size(223, 23);
+            this.btnSend.TabIndex = 9;
+            this.btnSend.Text = "Send";
+            this.btnSend.UseVisualStyleBackColor = true;
+            this.btnSend.Click += new System.EventHandler(this.btnSend_Click);
+            // 
+            // textSend
+            // 
+            this.textSend.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textSend.Location = new System.Drawing.Point(3, 3);
+            this.textSend.Name = "textSend";
+            this.textSend.Size = new System.Drawing.Size(223, 20);
+            this.textSend.TabIndex = 0;
+            // 
             // ServerLog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(260, 265);
-            this.Controls.Add(this.tabControl);
+            this.Controls.Add(this.tabClient);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
@@ -289,12 +326,14 @@
             this.Name = "ServerLog";
             this.Text = "Server SIP2";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ServerLog_FormClosed);
-            this.tabControl.ResumeLayout(false);
+            this.tabClient.ResumeLayout(false);
             this.tabPageLog.ResumeLayout(false);
             this.tabPageConfig.ResumeLayout(false);
             this.tabPageConfig.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericMax)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericPort)).EndInit();
+            this.tabPageClient.ResumeLayout(false);
+            this.tabPageClient.PerformLayout();
             this.ResumeLayout(false);
 
 		}
@@ -304,7 +343,7 @@
 		private System.Windows.Forms.Button button1;
 		private System.Windows.Forms.Button button2;
 		private System.Windows.Forms.Button button3;
-		private System.Windows.Forms.TabControl tabControl;
+		private System.Windows.Forms.TabControl tabClient;
 		private System.Windows.Forms.TabPage tabPageLog;
 		private System.Windows.Forms.TabPage tabPageConfig;
 		private System.Windows.Forms.RichTextBox textLog;
@@ -319,5 +358,8 @@
 		private System.Windows.Forms.MaskedTextBox textAddress;
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.CheckBox checkDebug;
-	}
+        private System.Windows.Forms.TabPage tabPageClient;
+        private System.Windows.Forms.Button btnSend;
+        private System.Windows.Forms.TextBox textSend;
+    }
 }

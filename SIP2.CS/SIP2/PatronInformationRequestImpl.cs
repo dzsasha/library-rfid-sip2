@@ -10,8 +10,8 @@ namespace IS.SIP2.CS.SIP2 {
     [Serializable]
     [Sip2Identificator(Sip2Request.scPatronInformation)]
     public class PatronInformationRequestImpl : Sip2AnswerImpl, IPatronInformationRequest {
-        public class SummarySerializeImpl : ISip2Deserialize {
-            public object Deserialize(PropertyDescriptor prop, string value) {
+        public class SummarySerializeImpl : Sip2SerializeImpl {
+            public override object Deserialize(PropertyDescriptor prop, string value) {
                 List<bool> result = new List<bool>();
                 foreach (char c in value) {
                     result.Add(c.Equals('Y'));
@@ -22,47 +22,47 @@ namespace IS.SIP2.CS.SIP2 {
         /// <summary>
         /// дата операции
         /// </summary>
-        [Sip2Field(2, Required = true, Description = "дата операции", Length = 18)]
+        [Sip2Field(2, 18, Required = true, Description = "дата операции")]
         public DateTime Date { get; set; }
         /// <summary>
         /// начальная единица
         /// </summary>
-        [Sip2Field(9, Identificator = "BQ", Version = Sip2Version.V200, Description = "конечная единица")]
+        [Sip2Field(Identificator = "BQ", Version = Sip2Version.V200, Description = "конечная единица", Order = 10)]
         public string EndItem { get; set; }
         /// <summary>
         /// идентификатор учреждения
         /// </summary>
-        [Sip2Field(4, Required = true, Identificator = "AO", Description = "идентификатор учреждения")]
+        [Sip2Field(Required = true, Identificator = "AO", Description = "идентификатор учреждения", Order = 4)]
         public string InstitutionId { get; set; }
         /// <summary>
         /// язык
         /// </summary>
-        [Sip2Field(1, Length = 3, Required = true, Description = "язык")]
+        [Sip2Field(1, 3, Required = true, Description = "язык")]
         public string Language { get; set; }
         /// <summary>
         /// идентификатор абонента
         /// </summary>
-        [Sip2Field(5, Required = true, Identificator = "AA", Description = "идентификатор абонента")]
+        [Sip2Field(Required = true, Identificator = "AA", Description = "идентификатор абонента", Order = 5)]
         public string PatronIdentifier { get; set; }
         /// <summary>
         /// пароль абонента
         /// </summary>
-        [Sip2Field(7, Identificator = "AD", Description = "пароль абонента")]
+        [Sip2Field(Identificator = "AD", Description = "пароль абонента", Order = 7)]
         public string PatronPassword { get; set; }
         /// <summary>
         /// конечная единица
         /// </summary>
-        [Sip2Field(8, Identificator = "BP", Version = Sip2Version.V200, Description = "начальная единица")]
+        [Sip2Field(Identificator = "BP", Version = Sip2Version.V200, Description = "начальная единица", Order = 8)]
         public string StartItem { get; set; }
         /// <summary>
         /// сводка
         /// </summary>
-        [Sip2Field(3, Required = true, Length = 10, Version = Sip2Version.V200, DeserializeType = typeof(SummarySerializeImpl), Description = "сводка")]
+        [Sip2Field(3, 10, Required = true, Version = Sip2Version.V200, SerializeType = typeof(SummarySerializeImpl), Description = "сводка")]
         public bool[] Summary { get; set; }
         /// <summary>
         /// окончательный пароль
         /// </summary>
-        [Sip2Field(6, Identificator = "AC", Description = "окончательный пароль")]
+        [Sip2Field(Identificator = "AC", Description = "окончательный пароль", Order = 6)]
         public string TerminalPassword { get; set; }
     }
 }

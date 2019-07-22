@@ -10,12 +10,20 @@ namespace IS.SIP2.CS {
     /// Интерфейс для сериализации поля
     /// </summary>
     public interface ISip2Serialize {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="value"></param>
+        /// <param name="separator"></param>
+        /// <returns></returns>
         string Serialize(Sip2FieldAttribute field, object value, Char separator);
-    }
-    /// <summary>
-    /// Интрефейс для десериализации поля
-    /// </summary>
-    public interface ISip2Deserialize {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="prop"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
         object Deserialize(PropertyDescriptor prop, string value);
     }
 }
