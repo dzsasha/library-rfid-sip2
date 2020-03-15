@@ -4,26 +4,23 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.Serialization;
 
-namespace IS.Interface.RFID
-{
+namespace IS.Interface.RFID {
 	/// <summary>
 	/// Имплементация интерфейса IModel
 	/// </summary>
 	[DataContract(Name = "model", Namespace = "http://informsystema.com/marc/service/")]
 	[Serializable]
 	[TypeConverter(typeof(ModelConverter<ModelImpl>))]
-	public class ModelImpl : IModel
-	{
+	public class ModelImpl : IModel {
 		/// <summary>
 		/// Конструктор по умолчанию
 		/// </summary>
-		public ModelImpl() {}
+		public ModelImpl() { }
 		/// <summary>
 		/// Конструктор по умолчанию
 		/// </summary>
 		/// <param name="model">Тип модели</param>
-		public ModelImpl(TypeModel model)
-		{
+		public ModelImpl(TypeModel model) {
 			Model = model;
 		}
 
@@ -46,16 +43,14 @@ namespace IS.Interface.RFID
 		/// <summary>
 		/// Записать данные на метку
 		/// </summary>
-		public virtual void Write()
-		{
+		public virtual void Write() {
 		}
 		/// <summary>
 		/// Чтение модели данных
 		/// </summary>
 		/// <param name="id">идентификатор метки</param>
 		/// <returns>Модель данных</returns>
-		public virtual ModelImpl[] Read(string id)
-		{
+		public virtual ModelImpl[] Read(string id) {
 			return new List<ModelImpl>().ToArray();
 		}
 

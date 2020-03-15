@@ -4,12 +4,9 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace IS.RFID.SmartCard
-{
-    public static class External
-    {
-        public enum SCardFunctionReturnCodes : uint
-        {
+namespace IS.RFID.SmartCard {
+    public static class External {
+        public enum SCardFunctionReturnCodes : uint {
             SCARD_S_SUCCESS = 0x0,
             //'Errors
             SCARD_E_CANCELLED = 0x80100002,
@@ -76,8 +73,7 @@ namespace IS.RFID.SmartCard
             SCARD_W_INSERTED_CARD = 0x8010006A,
         }
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-        public struct SCARD_READERSTATE
-        {
+        public struct SCARD_READERSTATE {
             /// <summary>
             /// Reader
             /// </summary>
@@ -104,8 +100,7 @@ namespace IS.RFID.SmartCard
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
             public byte[] rgbAtr;
         }
-        internal enum SCardState
-        {
+        internal enum SCardState {
             /// <summary>
             /// Unware
             /// </summary>
@@ -156,8 +151,7 @@ namespace IS.RFID.SmartCard
             UNPOWERED = 0x00000400
         }
         [StructLayout(LayoutKind.Sequential)]
-        public struct SCARD_IO_REQUEST
-        {
+        public struct SCARD_IO_REQUEST {
             public UInt32 dwProtocol;
             public UInt32 cbPciLength;
         }
@@ -192,15 +186,13 @@ namespace IS.RFID.SmartCard
         [DllImport("kernel32.dll")]
         public extern static IntPtr GetProcAddress(IntPtr handle, string procName);
 
-        internal static IntPtr GetPciT0()
-        {
+        internal static IntPtr GetPciT0() {
             IntPtr handle = LoadLibrary("Winscard.dll");
             IntPtr pci = GetProcAddress(handle, "g_rgSCardT0Pci");
             FreeLibrary(handle);
             return pci;
         }
-        internal static IntPtr GetPciT1()
-        {
+        internal static IntPtr GetPciT1() {
             IntPtr handle = LoadLibrary("Winscard.dll");
             IntPtr pci = GetProcAddress(handle, "g_rgSCardT1Pci");
             FreeLibrary(handle);

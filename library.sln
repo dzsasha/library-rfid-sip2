@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.572
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29806.167
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IS.Interface", "Interface\IS.Interface.csproj", "{46BF13EC-EDAA-445C-B108-CE20BE5A2C8A}"
 EndProject
@@ -115,7 +115,6 @@ Global
 		{B2573D19-1021-4DED-9028-D471AF9687FE}.Debug|x86.Build.0 = Debug|x86
 		{B2573D19-1021-4DED-9028-D471AF9687FE}.Release|Any CPU.ActiveCfg = Release|x86
 		{B2573D19-1021-4DED-9028-D471AF9687FE}.Release|x86.ActiveCfg = Release|x86
-		{B2573D19-1021-4DED-9028-D471AF9687FE}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

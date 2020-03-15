@@ -109,7 +109,7 @@ namespace IS.Interface.SIP2 {
         /// <summary>
         /// Статус абонента
         /// </summary>
-        byte[] PatronStatus { get; set; }
+        ushort PatronStatus { get; set; }
         /// <summary>
         /// язык
         /// </summary>

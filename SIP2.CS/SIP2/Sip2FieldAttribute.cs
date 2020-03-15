@@ -2,8 +2,6 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Globalization;
-using System.Text;
 
 namespace IS.SIP2.CS.SIP2 {
     /// <summary>

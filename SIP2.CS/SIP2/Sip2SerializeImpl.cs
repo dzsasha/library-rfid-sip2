@@ -1,14 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace IS.SIP2.CS.SIP2 {
     public class Sip2SerializeImpl : ISip2Serialize {
         #region implements ISip2Formatter
+        /// <summary>
+        /// Сериализовать поле
+        /// </summary>
+        /// <param name="field">атрибуты поля</param>
+        /// <param name="value">значение</param>
+        /// <param name="separator">разделитель</param>
+        /// <returns>текстовое представление</returns>
         public virtual string Serialize(Sip2FieldAttribute field, object value, Char separator) {
             StringBuilder result = new StringBuilder();
             object val = value;
@@ -22,14 +26,14 @@ namespace IS.SIP2.CS.SIP2 {
             if(val != null && !String.IsNullOrEmpty(field.Identificator)) {
                 result.Append(field.Identificator);
             }
-            if(val is bool) {
-                result.Append((bool)val ? "Y" : "N");
-            } else if((val is string) && (!String.IsNullOrEmpty((val as string)))) {
-                result.Append(val as string);
+            if(val is bool b) {
+                result.Append(b ? "Y" : "N");
+            } else if((val is string s) && (!String.IsNullOrEmpty(s))) {
+                result.Append(s);
             } else if(val is int) {
                 result.Append(String.Format("{0:D" + field.Length + "}", val));
-            } else if(val is DateTime) {
-                result.Append(((DateTime)val).ToString("yyyyMMdd    HHmmss"));
+            } else if(val is DateTime time) {
+                result.Append(time.ToString("yyyyMMdd    HHmmss"));
             } else {
                 result.Append("");
             }
@@ -38,26 +42,28 @@ namespace IS.SIP2.CS.SIP2 {
             }
             return result.ToString();
         }
-
+        /// <summary>
+        /// Десериализовать поле
+        /// </summary>
+        /// <param name="prop">поля</param>
+        /// <param name="value">текстовое представление</param>
+        /// <returns>поле</returns>
         public virtual object Deserialize(PropertyDescriptor prop, string value) {
-            if(!String.IsNullOrEmpty(value)) {
-                try {
-                    if(prop.PropertyType == typeof(int)) {
-                        return Convert.ToInt32(value);
-                    } else if(prop.PropertyType == typeof(string)) {
-                        return value;
-                    } else if(prop.PropertyType == typeof(DateTime)) {
-                        return DateTime.ParseExact(value, "yyyyMMdd    HHmmss", CultureInfo.InvariantCulture);
-                    } else if(prop.PropertyType == typeof(bool)) {
-                        return ("Y".Equals(value) || "1".Equals(value));
-                    }
-                } catch(Exception) {
-                    return null;
+            try {
+                if(prop.PropertyType == typeof(int)) {
+                    return Convert.ToInt32(value);
+                } else if(prop.PropertyType == typeof(string)) {
+                    return value;
+                } else if(prop.PropertyType == typeof(DateTime)) {
+                    return DateTime.ParseExact(value, "yyyyMMdd    HHmmss", CultureInfo.InvariantCulture);
+                } else if(prop.PropertyType == typeof(bool)) {
+                    return ("Y".Equals(value) || "1".Equals(value));
                 }
+            } catch(Exception) {
+                return null;
             }
             return null;
         }
-
         #endregion
     }
 }

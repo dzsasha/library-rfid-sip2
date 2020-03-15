@@ -2,16 +2,14 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-namespace IS.Interface.RFID
-{
+namespace IS.Interface.RFID {
 	/// <summary>
 	/// Интерфейс для модели данных
 	/// </summary>
 	[Guid("4AFA5E2E-786F-4CD3-B811-44A867DE2908")]
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComVisible(true)]
-	public interface IModel
-	{
+	public interface IModel {
 		/// <summary>
 		/// Тип модели
 		/// </summary>
@@ -35,8 +33,7 @@ namespace IS.Interface.RFID
 	[Guid("4AFA5E2E-786F-4CD3-B811-44A867DE2909")]
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComVisible(true)]
-	public interface IModelEx : IModel
-	{
+	public interface IModelEx : IModel {
 		/// <summary>
 		/// Поля модели данных
 		/// </summary>
@@ -48,8 +45,7 @@ namespace IS.Interface.RFID
 	[Guid("4AFA5E2E-786F-4CD3-B811-44A867DE290A")]
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComVisible(true)]
-	public interface ITypeModel : IEnumerable<IModel>
-	{
+	public interface ITypeModel : IEnumerable<IModel> {
 		/// <summary>
 		/// Тип модели данных
 		/// </summary>
@@ -63,10 +59,10 @@ namespace IS.Interface.RFID
 		/// </summary>
 		/// <param name="model">модель</param>
 		void Add(IModel model);
-        /// <summary>
-        /// Удалить модель
-        /// </summary>
-        /// <param name="model">модель</param>
-        bool Remove(IModel model);
+		/// <summary>
+		/// Удалить модель
+		/// </summary>
+		/// <param name="model">модель</param>
+		bool Remove(IModel model);
 	}
 }

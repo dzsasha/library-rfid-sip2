@@ -20,14 +20,13 @@ namespace IS.RFID.CS {
             try {
                 _myServiceHost = new ServiceHost(typeof(ServiceImpl));
                 _myServiceHost.Open();
-            } catch (Exception ex) {
+            } catch(Exception ex) {
                 Log.For(this).Error(ex);
             }
 
         }
 
-        public new void Dispose()
-        {
+        public new void Dispose() {
             _myServiceHost.Close();
             base.Dispose();
         }

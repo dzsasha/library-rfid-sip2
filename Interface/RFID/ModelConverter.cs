@@ -7,39 +7,30 @@ using System.Linq;
 using System.Runtime.Serialization.Json;
 using System.Text;
 
-namespace IS.Interface.RFID
-{
+namespace IS.Interface.RFID {
 	/// <summary>
 	/// Класс конвертор для модели метки
 	/// </summary>
-	public class ModelConverter<T> : TypeConverter
-	{
-		public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
-		{
+	public class ModelConverter<T> : TypeConverter {
+		public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType) {
 			return sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
 		}
 
-		public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
-		{
+		public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType) {
 			return destinationType == typeof(string) || base.CanConvertTo(context, destinationType);
 		}
 
-		public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
-		{
+		public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType) {
 			return base.ConvertTo(context, culture, value, destinationType);
 		}
 
-		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
-		{
-			try
-			{
+		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value) {
+			try {
 				MemoryStream stream1 = new MemoryStream(Encoding.Unicode.GetBytes(value.ToString()));
 				DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(T));
 				stream1.Position = 0;
 				return (T)ser.ReadObject(stream1);
-			}
-			catch (Exception ex)
-			{
+			} catch(Exception ex) {
 				Log.For(this).Error(String.Format("ModelConverter:ConvertFrom - {0}", ex.Message));
 				return null;
 			}

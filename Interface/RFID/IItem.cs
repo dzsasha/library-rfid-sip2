@@ -1,15 +1,13 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace IS.Interface.RFID
-{
+namespace IS.Interface.RFID {
 	/// <summary>
 	/// Интерфейс метки
 	/// </summary>
 	[Guid("4AFA5E2E-786F-4CD3-B811-44A867DE2905")]
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComVisible(true)]
-	public interface IItem
-	{
+	public interface IItem {
 		/// <summary>
 		/// Идентификатор метки
 		/// </summary>
@@ -21,8 +19,7 @@ namespace IS.Interface.RFID
 	[Guid("4AFA5E2E-786F-4CD3-B811-44A867DE2906")]
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComVisible(true)]
-	public interface IItemEx : IItem
-	{
+	public interface IItemEx : IItem {
 		/// <summary>
 		/// Противокражный бит
 		/// </summary>
@@ -34,8 +31,7 @@ namespace IS.Interface.RFID
 	[Guid("4AFA5E2E-786F-4CD3-B811-44A867DE2907")]
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComVisible(true)]
-	public interface IItemModel : IItem
-	{
+	public interface IItemModel : IItem {
 		/// <summary>
 		/// Список существующих моделей на метке
 		/// </summary>

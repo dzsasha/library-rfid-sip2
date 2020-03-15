@@ -35,6 +35,10 @@
     <EmbeddedResource Include="IS.ru-ru.wxl" />
   </ItemGroup>
   <ItemGroup>
+    <WixExtension Include="WixIIsExtension">
+      <HintPath>$(WixExtDir)\WixIIsExtension.dll</HintPath>
+      <Name>WixIIsExtension</Name>
+    </WixExtension>
     <WixExtension Include="WixUtilExtension">
       <HintPath>$(WixExtDir)\WixUtilExtension.dll</HintPath>
       <Name>WixUtilExtension</Name>
@@ -59,6 +63,13 @@
     <HarvestFile Include="$(IntermediateOutputPath)\websocket-sharp.dll">
       <Link>External\websocket-sharp.dll</Link>
       <ComponentGroupName>IS.RFID.CS.WebSocket</ComponentGroupName>
+      <DirectoryRefId>INSTALLFOLDER</DirectoryRefId>
+      <PreprocessorVariable>var.IS.RFID.CS.TargetDir</PreprocessorVariable>
+      <SuppressRootDirectory>True</SuppressRootDirectory>
+    </HarvestFile>
+    <HarvestFile Include="$(IntermediateOutputPath)\IS.RFID.Tools.dll">
+      <Link>External\IS.RFID.Tools</Link>
+      <ComponentGroupName>IS.RFID.Tools</ComponentGroupName>
       <DirectoryRefId>INSTALLFOLDER</DirectoryRefId>
       <PreprocessorVariable>var.IS.RFID.CS.TargetDir</PreprocessorVariable>
       <SuppressRootDirectory>True</SuppressRootDirectory>
@@ -126,8 +137,7 @@
       <Name>IS.RFID.Tools</Name>
       <Project>{421e08ae-a87d-4fd8-9a5a-715804747c84}</Project>
       <Private>True</Private>
-      <DoNotHarvest>
-      </DoNotHarvest>
+      <DoNotHarvest>True</DoNotHarvest>
       <RefProjectOutputGroups>Binaries</RefProjectOutputGroups>
       <RefTargetDir>INSTALLFOLDER</RefTargetDir>
     </ProjectReference>

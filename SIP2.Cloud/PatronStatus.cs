@@ -9,20 +9,21 @@ namespace IS.SIP2.Cloud {
         bool ISip2Command<IPatronStatusRequest, IPatronStatusResponse>.execute(ISip2Config config, IPatronStatusRequest request, ref IPatronStatusResponse response) {
             lock (CS) {
                 Boolean isSucceeded = true;
+                _status = 0;
                 try {
                     using (NCIPMessage message = config.param.GetAnswer(getLookupUser(config.param, new BarcodeValues() {userId = request.PatronIdentifier}))) {
                         foreach (var item in message.getItem<LookupUserResponse>().Items) {
-                            if (item is UserOptionalFields) {
-                                if ((item as UserOptionalFields).UserLanguage != null) {
+                            if (item is UserOptionalFields userOptionalFields) {
+                                if (userOptionalFields.UserLanguage != null) {
                                     //                                response.GetField("language").Value = (item as UserOptionalFields).UserLanguage[0].Value;
                                 }
-                                if ((item as UserOptionalFields).NameInformation != null) {
-                                    foreach (var nameInformation in (item as UserOptionalFields).NameInformation.Items) {
-                                        if (nameInformation is PersonalNameInformation) {
-                                            foreach (var personalNameInformation in (nameInformation as PersonalNameInformation).Items) {
-                                                if (personalNameInformation is StructuredPersonalUserName) {
+                                if (userOptionalFields.NameInformation != null) {
+                                    foreach (var nameInformation in userOptionalFields.NameInformation.Items) {
+                                        if (nameInformation is PersonalNameInformation information) {
+                                            foreach (var personalNameInformation in information.Items) {
+                                                if (personalNameInformation is StructuredPersonalUserName structuredPersonalUserName) {
                                                     response.PersonalName =
-                                                        $"{(personalNameInformation as StructuredPersonalUserName).GivenName} {(personalNameInformation as StructuredPersonalUserName).Surname}";
+                                                        $"{structuredPersonalUserName.GivenName} {structuredPersonalUserName.Surname}";
                                                 } else if (personalNameInformation is string) {
                                                     response.PersonalName = (personalNameInformation as string);
                                                 }
@@ -30,26 +31,27 @@ namespace IS.SIP2.Cloud {
                                         }
                                     }
                                 }
-                                if ((item as UserOptionalFields).BlockOrTrap != null && (item as UserOptionalFields).BlockOrTrap.Length > 0) {
-                                    foreach (BlockOrTrap block in (item as UserOptionalFields).BlockOrTrap) {
+                                if (userOptionalFields.BlockOrTrap != null && userOptionalFields.BlockOrTrap.Length > 0) {
+                                    foreach (BlockOrTrap block in userOptionalFields.BlockOrTrap) {
                                         if (block.BlockOrTrapType.Value.Equals("Block Check Out")) {
+                                            _status |= Convert.ToUInt16(EPatronStatus.PaymentRule);
                                             _status |= Convert.ToUInt16(EPatronStatus.ManyOverdueItems);
                                         }
                                     }
                                 }
-                            } else if (item is Problem) {
+                            } else if (item is Problem problem) {
                                 isSucceeded = false;
                                 response.PatronIdentifier = request.PatronIdentifier;
-                                Log.For(this).ErrorFormat("ERROR!!! PatronStatus: {0}", new Exception((item as Problem).ProblemDetail));
-                            } else if (item is UserId) {
-                                response.PatronIdentifier = (item as UserId).UserIdentifierValue;
+                                Log.For(this).ErrorFormat("ERROR!!! PatronStatus: {0}", new Exception(problem.ProblemDetail));
+                            } else if (item is UserId userId) {
+                                response.PatronIdentifier = userId.UserIdentifierValue;
                                 response.ValidPatron = true;
                                 response.ValidPatronPassword = true;
                             }
                         }
                     }
                     response.Language = request.Language;
-                    response.PatronStatus = BitConverter.GetBytes(_status);
+                    response.PatronStatus = _status;
                     response.Date = DateTime.Now;
                     response.InstitutionId = Convert.ToString(config.param.GetField("InstitutionId").Value.ToString());
                     if (config.param.GetField("PatronStatus.ScreenMessage") != null && config.param.GetField("PatronStatus.ScreenMessage").Value != null) {

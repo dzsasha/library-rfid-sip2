@@ -3,10 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Configuration;
-using System.Net;
-using System.Runtime.Serialization;
-using System.ServiceModel.Web;
-using System.ServiceModel;
 using IS.Interface;
 using IS.Interface.RFID;
 
@@ -43,6 +39,22 @@ namespace IS.RFID.Service {
             get { return Convert.ToBoolean(base["revert"]); }
             set { base["revert"] = value; }
         }
+        /// <summary>
+        /// Использовать только для одиночного чтения
+        /// </summary>
+        [ConfigurationProperty("disable", DefaultValue = false)]
+        public bool Disable {
+            get { return Convert.ToBoolean(base["disable"]); }
+            set { base["disable"] = value; }
+        }
+        /// <summary>
+        /// Всегда пытаться инициализировать считыватель перед получением меток
+        /// </summary>
+        [ConfigurationProperty("force", DefaultValue = false)]
+        public bool Force {
+            get { return Convert.ToBoolean(base["force"]); }
+            set { base["force"] = value; }
+        }
         public Type GetReaderType() {
             return Type.GetTypeFromProgID(Name);
         }
@@ -61,7 +73,7 @@ namespace IS.RFID.Service {
         /// <param name="param">параметры для реадера</param>
         /// <returns>успешность открытия реадера</returns>
         public bool InitReader(IField[] param) {
-            if (Reader == null) {
+            if(Reader == null) {
                 Type readerType = GetReaderType();
                 Log.For(this).Debug($"ReaderType: {readerType}");
                 Reader = (readerType != null) ? (IReader)Activator.CreateInstance(readerType) : null;
@@ -86,13 +98,13 @@ namespace IS.RFID.Service {
         /// Событие ошибки
         /// </summary>
         public event ErrorEventHandler OnError {
-            add { if (Reader != null) Reader.OnError += value; }
-            remove { if (Reader != null) Reader.OnError -= value; }
+            add { if(Reader != null) Reader.OnError += value; }
+            remove { if(Reader != null) Reader.OnError -= value; }
         }
 
         public event EventHandler OnChange {
-            add { if (Reader != null) Reader.OnChange += value; }
-            remove { if (Reader != null) Reader.OnChange -= value; }
+            add { if(Reader != null) Reader.OnChange += value; }
+            remove { if(Reader != null) Reader.OnChange -= value; }
         }
 
         #endregion

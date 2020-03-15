@@ -4,16 +4,22 @@ using System.ServiceModel;
 using System.ServiceModel.Web;
 using IS.Interface.RFID;
 
-namespace IS.RFID.Service
-{
+namespace IS.RFID.Service {
 	/// <summary>
 	/// Интерфейс сервиса для работы с RFID-устройствами
 	/// </summary>
 	[ServiceContract(Name = "IServiceRFID", Namespace = "http://informsystema.com/marc/service/")]
-	public interface IServiceRFID
-	{
+	public interface IServiceRFID {
 		[WebInvoke(Method = "OPTIONS", UriTemplate = "*")]
 		void Options();
+		/// <summary>
+		/// Получить прочитанные метки
+		/// </summary>
+		/// <returns>прочитанные метки</returns>
+		[OperationContract(Name = "Read", Action = "Read")]
+		[WebInvoke(Method = "*", UriTemplate = "Read")]
+		[return: MessageParameter(Name = "result")]
+		string[] Read();
 		/// <summary>
 		/// Получить прочитанные метки
 		/// </summary>

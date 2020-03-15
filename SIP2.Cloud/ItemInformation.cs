@@ -40,7 +40,9 @@ namespace IS.SIP2.Cloud {
                                         response.CirculationStatus = Sip2CirculationStatus.Other;
                                     } else if ((item as ItemOptionalFields).CirculationStatus.Value.Equals("On Order")) {
                                         response.CirculationStatus = Sip2CirculationStatus.OnOrder;
-                                    } else if ((item as ItemOptionalFields).CirculationStatus.Value.Equals("Available On Shelf")) {
+                                    } else if ((item as ItemOptionalFields).CirculationStatus.Value.Equals("Available For Pickup")) {
+                                        response.CirculationStatus = Sip2CirculationStatus.Available;
+                                    } else if((item as ItemOptionalFields).CirculationStatus.Value.Equals("Available On Shelf")) {
                                         response.CirculationStatus = Sip2CirculationStatus.Available;
                                     } else if ((item as ItemOptionalFields).CirculationStatus.Value.Equals("On Loan")) {
                                         response.CirculationStatus = Sip2CirculationStatus.Charged;
@@ -53,8 +55,10 @@ namespace IS.SIP2.Cloud {
                                     } else if ((item as ItemOptionalFields).CirculationStatus.Value.Equals("HoldShelf")) {
                                         response.CirculationStatus = Sip2CirculationStatus.HoldShelf;
                                     } else if ((item as ItemOptionalFields).CirculationStatus.Value.Equals("Waiting To Be Reshelved")) {
-                                        response.CirculationStatus = Sip2CirculationStatus.HoldShelf;
+                                        response.CirculationStatus = Sip2CirculationStatus.ReShelved;
                                     } else if ((item as ItemOptionalFields).CirculationStatus.Value.Equals("In Transit Between Library Locations")) {
+                                        response.CirculationStatus = Sip2CirculationStatus.InTransit;
+                                    } else if((item as ItemOptionalFields).CirculationStatus.Value.Equals("Pending Transfer")) {
                                         response.CirculationStatus = Sip2CirculationStatus.InTransit;
                                     } else if ((item as ItemOptionalFields).CirculationStatus.Value.Equals("Claimed Returned Or Never Borrowed")) {
                                         response.CirculationStatus = Sip2CirculationStatus.ClaimedReurned;

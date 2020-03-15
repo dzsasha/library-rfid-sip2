@@ -40,7 +40,7 @@ namespace IS.SIP2.Cloud {
 
         internal static T getItem<T>(this NCIPMessage message) {
             foreach (Object obj in message.Items) {
-                if (typeof(T).Equals(obj.GetType())) {
+                if (typeof(T) == obj.GetType()) {
                     return (T)obj;
                 }
             }

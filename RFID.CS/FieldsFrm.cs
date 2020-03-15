@@ -9,12 +9,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace IS.RFID.CS
-{
-    public partial class FieldsFrm : Form
-    {
-        public FieldsFrm(IField[] fields)
-        {
+namespace IS.RFID.CS {
+    public partial class FieldsFrm : Form {
+        public FieldsFrm(IField[] fields) {
             _fields = fields;
             InitializeComponent();
             clmnKey.DataPropertyName = "Name";

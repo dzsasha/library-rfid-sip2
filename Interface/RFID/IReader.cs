@@ -2,16 +2,14 @@
 using System.IO;
 using System.Runtime.InteropServices;
 
-namespace IS.Interface.RFID
-{
+namespace IS.Interface.RFID {
 	/// <summary>
 	/// Интрефейс реадера
 	/// </summary>
 	[Guid("4AFA5E2E-786F-4CD3-B811-44A867DE290B")]
 	[InterfaceType(ComInterfaceType.InterfaceIsDual)]
 	[ComVisible(true)]
-	public interface IReader
-	{
+	public interface IReader {
 		/// <summary>
 		/// Открыть реадер
 		/// </summary>

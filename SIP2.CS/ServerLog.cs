@@ -46,7 +46,8 @@ namespace IS.SIP2.CS {
 
         private void _server_OnSend(object sender, Sip2MessageEventArgs e) {
             if (textLog.InvokeRequired) {
-                textLog.Invoke((ThreadStart)(() => textLog.AppendText(Environment.NewLine + String.Format("{0} => {1}", (sender as Socket).LocalEndPoint.ToString(), e.str))));
+                textLog.Invoke((ThreadStart)(() => textLog.AppendText(Environment.NewLine +
+                                                                      $"{(sender as Socket)?.LocalEndPoint.ToString()} => {e.str}")));
             } else {
                 textLog.AppendText(Environment.NewLine + e.str);
             }
@@ -54,7 +55,8 @@ namespace IS.SIP2.CS {
 
         private void _server_OnReceive(object sender, Sip2MessageEventArgs e) {
             if (textLog.InvokeRequired) {
-                textLog.Invoke((ThreadStart)(() => textLog.AppendText(Environment.NewLine + String.Format("{0} <= {1}", (sender as Socket).RemoteEndPoint.ToString(), e.str))));
+                textLog.Invoke((ThreadStart)(() => textLog.AppendText(Environment.NewLine +
+                                                                      $"{(sender as Socket)?.RemoteEndPoint.ToString()} <= {e.str}")));
             } else {
                 textLog.AppendText(Environment.NewLine + e.str);
             }

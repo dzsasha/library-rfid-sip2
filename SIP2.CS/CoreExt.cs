@@ -34,20 +34,20 @@ namespace IS.SIP2.CS {
                     obj = (ISip2Response)formatter.Deserialize(stream);
                 }
                 obj.Sequence = -1;
-                return serialize(formatter, obj);
+                return obj.serialize(formatter);
             } else {
                 foreach(var cmd in server.commands) {
                     foreach(Type typeImpl in findType(cmd.GetType(), sip2Request, ref request, ref response)
-                        .FindInterfaces((Type a, object obj) => { return a.GetMethod("execute") != null; }, null)) {
+                        .FindInterfaces((Type a, object obj) => a.GetMethod("execute") != null, null)) {
                         IFormatter formatter = new Sip2Formatter(request, config);
                         using(Stream stream = msg.Substring(2).GetStream()) {
                             request = (ISip2Request)formatter.Deserialize(stream);
                         }
                         if(request != null) {
                             var result = typeImpl.GetMethod("execute")?.Invoke(cmd, new object[] { config, request, response });
-                            if((result is bool) && (bool)result) {
+                            if((result is bool b) && b) {
                                 response.Sequence = request.Sequence;
-                                return serialize(formatter, response);
+                                return response.serialize(formatter);
                             }
                         }
                         return "";
@@ -59,9 +59,10 @@ namespace IS.SIP2.CS {
         internal static string doResend(this ISip2 server, ISip2Config config) {
             ISip2Answer obj = new ResendImpl();
             IFormatter formatter = new Sip2Formatter(obj, config);
-            return serialize(formatter, obj);
+            return obj.serialize(formatter);
         }
-        private static string serialize(IFormatter formatter, ISip2Answer obj) {
+
+        internal static string serialize(this ISip2Answer obj, IFormatter formatter) {
             using(Stream writer = new MemoryStream()) {
                 formatter.Serialize(writer, obj);
                 Sip2FieldAttribute attr = obj.GetType().GetProperty("CheckSum").GetCustomAttribute<Sip2FieldAttribute>();
@@ -70,6 +71,7 @@ namespace IS.SIP2.CS {
                 return ((attr != null) ? attr.Serialize(rdr.ReadToEnd(), '\0') : "");
             }
         }
+
         private static Type findType(Type cmdType, Sip2Request cmd, ref ISip2Request request_ref, ref ISip2Response response_ref) {
             ISip2Request request = null;
             ISip2Response response = null;
@@ -83,7 +85,7 @@ namespace IS.SIP2.CS {
                         response = (ISip2Response)Activator.CreateInstance(cacheCommand[(int)attr.response]);
                     }
                     if(request == null || response == null) {
-                        foreach(Type typeImpl in Assembly.GetEntryAssembly().GetTypes()) {
+                        foreach(Type typeImpl in Assembly.GetEntryAssembly()?.GetTypes()) {
                             Sip2IdentificatorAttribute typeAttr = typeImpl.GetCustomAttribute<Sip2IdentificatorAttribute>();
                             if(typeAttr != null && typeAttr.request.Equals(attr.request)) {
                                 request = (ISip2Request)Activator.CreateInstance(typeImpl);

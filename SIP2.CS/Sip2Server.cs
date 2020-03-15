@@ -4,8 +4,6 @@ using System.Net.Sockets;
 using IS.Interface.SIP2;
 using IS.Interface;
 using System.Net;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using IS.SIP2.CS.SIP2;
@@ -66,18 +64,18 @@ namespace IS.SIP2.CS {
                         try {
                             var buffer = new byte[4096];
                             var byteReads = await Task.Factory.FromAsync(socket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, null, socket), socket.EndReceive).ConfigureAwait(false);
-                            if (byteReads > 0) {
-                                foreach (string sb in _serviceSection.Answers.encoding.GetString(buffer, 0, byteReads).Split(new char[] { '\r' }, StringSplitOptions.RemoveEmptyEntries)) {
+                            if(byteReads > 0) {
+                                foreach(string sb in _serviceSection.Answers.encoding.GetString(buffer, 0, byteReads).Split(new char[] { '\r' }, StringSplitOptions.RemoveEmptyEntries)) {
                                     Log.For(this).DebugFormat("ReceiveAsync from {0}: {1}", socket.LocalEndPoint.ToString(), sb);
                                     OnReceive?.Invoke(socket, new Sip2MessageEventArgs(sb));
-                                    if (!Sip2AnswerImpl.verify(sb)) {
-                                        throw new Exception("error checksum");
+                                    if(!Sip2AnswerImpl.verify(sb)) {
+                                        throw new CheckSumException();
                                     }
                                     lastCmd = _sip2Client.doMessage(sb, _serviceSection.Answers, ref lastCmd);
-                                    if (!Sip2AnswerImpl.verify(lastCmd)) {
-                                        throw new Exception("error checksum");
+                                    if(!Sip2AnswerImpl.verify(lastCmd)) {
+                                        throw new CheckSumException();
                                     }
-                                    if (socket.Send(_serviceSection.Answers.encoding.GetBytes(lastCmd)) > 0) {
+                                    if(socket.Send(_serviceSection.Answers.encoding.GetBytes(lastCmd)) > 0) {
                                         socket.Send(new byte[] { 0x0D });
                                         Log.For(this).DebugFormat("send: {0}", lastCmd);
                                         OnSend?.Invoke(socket, new Sip2MessageEventArgs(lastCmd));
@@ -85,12 +83,22 @@ namespace IS.SIP2.CS {
                                 }
                             }
                         } catch (Exception ex) {
-                            Log.For(this).Error("ReceiveAsync", ex);
-                            String sSend = _sip2Client.doResend(_serviceSection.Answers);
-                            socket.Send(_serviceSection.Answers.encoding.GetBytes(sSend));
-                            socket.Send(new byte[] { 0x0D });
-                            OnSend?.Invoke(socket, new Sip2MessageEventArgs(sSend));
-                            Sip2Client_OnError(this, new ErrorEventArgs(ex));
+                            if(socket.Connected && (ex is CheckSumException || ex is RequiredFieldException)) {
+                                try {
+                                    String sSend = _sip2Client.doResend(_serviceSection.Answers);
+                                    socket.Send(_serviceSection.Answers.encoding.GetBytes(sSend));
+                                    socket.Send(new byte[] { 0x0D });
+                                    OnSend?.Invoke(socket, new Sip2MessageEventArgs(sSend));
+                                } catch(Exception e) {
+                                    Log.For(this).Error("ReceiveAsync - Resend", e);
+                                    socket.Disconnect(false);   // Выходим из цикла ожидания, клиент должен переконнектится
+                                    Sip2Client_OnError(this, new ErrorEventArgs(e));
+                                }
+                            } else {
+                                Log.For(this).Error("ReceiveAsync", ex);
+                                socket.Disconnect(false);   // Выходим из цикла ожидания, клиент должен переконнектится
+                                Sip2Client_OnError(this, new ErrorEventArgs(ex));
+                            }
                         }
                     }
                 }).Start();

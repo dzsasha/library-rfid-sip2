@@ -12,10 +12,10 @@ namespace IS.SIP2.CS.SIP2 {
     public class PatronStatusResponseImpl : Sip2ResponsePrintImpl, IPatronStatusResponse {
         internal class PatronStatusImpl : Sip2SerializeImpl {
             public override string Serialize(Sip2FieldAttribute field, object value, Char separator) {
-                ushort status = BitConverter.ToUInt16((byte[])value, 0);
+                ushort status = Convert.ToUInt16(value);
                 string sRet = "";
-                for(int i = 0; i < 14; i++) {
-                    sRet += (status & (0x1 << i)) == 1 ? "Y" : " ";
+                for(int i = 0; i < field.Length; i++) {
+                    sRet += (status & (0x1 << i)) != 0 ? "Y" : " ";
                 }
                 return sRet;
             }
@@ -54,7 +54,7 @@ namespace IS.SIP2.CS.SIP2 {
         /// Статус абонента
         /// </summary>
         [Sip2Field(1, 14, Required = true, SerializeType = typeof(PatronStatusImpl))]
-        public byte[] PatronStatus { get; set; }
+        public ushort PatronStatus { get; set; }
         /// <summary>
         /// Ф.И.О.
         /// </summary>

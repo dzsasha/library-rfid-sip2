@@ -3,15 +3,12 @@ using System.Reflection;
 using log4net.Config;
 using log4net;
 
-namespace IS.Interface
-{
+namespace IS.Interface {
 	/// <summary>
 	/// Класс логгирования
 	/// </summary>
-	public class Log
-	{
-		static Log()
-		{
+	public class Log {
+		static Log() {
 			XmlConfigurator.Configure();
 		}
 		/// <summary>
@@ -19,9 +16,8 @@ namespace IS.Interface
 		/// </summary>
 		/// <param name="loggedObject"></param>
 		/// <returns></returns>
-		public static ILog For(object loggedObject)
-		{
-			if (loggedObject != null)
+		public static ILog For(object loggedObject) {
+			if(loggedObject != null)
 				return For(loggedObject.GetType());
 			else
 				return For(null);
@@ -31,9 +27,8 @@ namespace IS.Interface
 		/// </summary>
 		/// <param name="objectType"></param>
 		/// <returns></returns>
-		public static ILog For(Type objectType)
-		{
-			if (objectType != null)
+		public static ILog For(Type objectType) {
+			if(objectType != null)
 				return LogManager.GetLogger(Assembly.GetExecutingAssembly(), objectType.Name);
 			else
 				return LogManager.GetLogger(Assembly.GetExecutingAssembly(), string.Empty);

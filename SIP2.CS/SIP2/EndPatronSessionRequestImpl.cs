@@ -27,12 +27,12 @@ namespace IS.SIP2.CS.SIP2 {
         /// <summary>
         /// окончательный пароль
         /// </summary>
-        [Sip2Field(Required = true, Identificator = "AC", Description = "окончательный пароль", Order = 4)]
+        [Sip2Field(Identificator = "AC", Description = "окончательный пароль", Order = 4)]
         public string TerminalPassword { get; }
         /// <summary>
         /// пароль абонента
         /// </summary>
-        [Sip2Field(Required = true, Identificator = "AD", Description = "пароль абонента", Order = 5)]
+        [Sip2Field(Identificator = "AD", Description = "пароль абонента", Order = 5)]
         public string PatronPassword { get; }
     }
 }

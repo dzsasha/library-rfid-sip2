@@ -32,11 +32,11 @@ namespace IS.RFID.IDLogic {
                 List<IItem> lRet = new List<IItem>();
                 try {
                     string sRead = Externals.RfidReadData();
-                    if (!String.IsNullOrEmpty(sRead)) {
+                    if(!String.IsNullOrEmpty(sRead)) {
                         lRet.AddRange(sRead.Split(',').Select(GetItem));
                         OnChange?.Invoke(this, new EventArgs());
                     }
-                } catch (Exception ex) {
+                } catch(Exception ex) {
                     Log.For(this).Error(this, ex);
                     OnError?.Invoke(this, new ErrorEventArgs(ex));
                 }
@@ -49,15 +49,15 @@ namespace IS.RFID.IDLogic {
 
         public void CloseReader() {
             try {
-            } catch (Exception ex) {
+            } catch(Exception ex) {
                 Log.For(this).Error(this, ex);
                 OnError?.Invoke(this, new ErrorEventArgs(ex));
             }
         }
         public bool InitReader(IField[] param) {
             try {
-                foreach (IField field in param) {
-                    switch (field.Name) {
+                foreach(IField field in param) {
+                    switch(field.Name) {
                         case "Country":
                             _params[0].Value = field.Value;
                             break;
@@ -67,7 +67,7 @@ namespace IS.RFID.IDLogic {
                     }
                 }
                 return Externals.IsReaderOnline();
-            } catch (Exception ex) {
+            } catch(Exception ex) {
                 Log.For(this).Error(this, ex);
                 OnError?.Invoke(this, new ErrorEventArgs(ex));
             }

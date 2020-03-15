@@ -7,7 +7,7 @@ using System.Configuration;
 
 namespace IS.SIP2.CS.SIP2 {
     public class Sip2AnswerImpl : ISip2Answer {
-        public Sip2AnswerImpl() {
+        protected Sip2AnswerImpl() {
             foreach (PropertyDescriptor prop in TypeDescriptor.GetProperties(this)) {
                 Sip2FieldAttribute attr = prop.Attributes.OfType<Sip2FieldAttribute>().First();
                 if (attr.Required) {
@@ -25,20 +25,17 @@ namespace IS.SIP2.CS.SIP2 {
         }
         public static bool verify(string value) {
             CheckSumImpl impl = new CheckSumImpl();
-            string sum = value.Substring(value.LastIndexOf("AZ") + 2, 4);
-            string chsum = impl.checksum(value.Substring(0, value.LastIndexOf("AZ") + 2));
+            string sum = value.Substring(value.LastIndexOf("AZ", StringComparison.Ordinal) + 2, 4);
+            string chsum = impl.checksum(value.Substring(0, value.LastIndexOf("AZ", StringComparison.Ordinal) + 2));
             return chsum.Equals(sum);
         }
         internal class CheckSumImpl : ISip2Serialize {
-            private static ISip2Config _config = ((ServiceSection)ConfigurationManager.GetSection(ServiceSection.SectionName)).Answers;
+            private static readonly ISip2Config _config = ((ServiceSection)ConfigurationManager.GetSection(ServiceSection.SectionName)).Answers;
             public object Deserialize(PropertyDescriptor prop, string value) {
                 return Int32.Parse(value, NumberStyles.HexNumber);
             }
             public string checksum(string str) {
-                uint result = 0;
-                foreach (byte bt in _config.encoding.GetBytes(str)) {
-                    result += bt;
-                }
+                uint result = _config.encoding.GetBytes(str).Aggregate<byte, uint>(0, (current, bt) => current + bt);
                 result = result & 0xFFFF;
                 result = (uint)(-((int)result));
                 result = result & 0xFFFF;
@@ -50,7 +47,8 @@ namespace IS.SIP2.CS.SIP2 {
                 return $"{result}{checksum(result)}";
             }
         }
-        internal class SequenceImpl : ISip2Serialize {
+
+        private class SequenceImpl : ISip2Serialize {
             public object Deserialize(PropertyDescriptor prop, string value) {
                 if (String.IsNullOrEmpty(value)) {
                     return -1;

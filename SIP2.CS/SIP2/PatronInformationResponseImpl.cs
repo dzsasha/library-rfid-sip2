@@ -138,7 +138,7 @@ namespace IS.SIP2.CS.SIP2 {
         /// Статус абонента
         /// </summary>
         [Sip2Field(1, 14, Required = true, SerializeType = typeof(PatronStatusResponseImpl.PatronStatusImpl))]
-        public byte[] PatronStatus { get; set; }
+        public ushort PatronStatus { get; set; }
         /// <summary>
         /// Ф.И.О.
         /// </summary>

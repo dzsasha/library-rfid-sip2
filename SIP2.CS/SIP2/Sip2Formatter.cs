@@ -15,8 +15,10 @@ namespace IS.SIP2.CS.SIP2 {
             this.value = value;
             this._config = config;
         }
-        internal Object value { get; private set; }
-        internal class FieldComparer : IComparer {
+
+        private Object value { get; set; }
+
+        private class FieldComparer : IComparer {
             public FieldComparer(bool exclude) {
                 this._exclude = exclude;
             }
@@ -51,6 +53,16 @@ namespace IS.SIP2.CS.SIP2 {
             }
             return null;
         }
+        private Object Verify(Object obj) {
+            foreach(PropertyDescriptor prop in TypeDescriptor.GetProperties(obj).Sort(new FieldComparer(true))) {
+                Sip2FieldAttribute attr = prop.Attributes.OfType<Sip2FieldAttribute>().FirstOrDefault();
+                if (attr != null && attr.Required && prop.GetValue(obj) == null) {
+                    throw new Exception("required field");
+                }
+            }
+            return obj;
+        }
+
         #region implements IFormatter
         public SerializationBinder Binder { get; set; }
 
@@ -90,7 +102,8 @@ namespace IS.SIP2.CS.SIP2 {
                     prop.SetValue(value, attr.Deserialize(prop, new string(buffer, 0, iLength)));
                 }
             }
-            return value;
+
+            return Verify(value);
         }
 
         public void Serialize(Stream serializationStream, object graph) {
@@ -98,7 +111,7 @@ namespace IS.SIP2.CS.SIP2 {
             if(idAttr != null) {
                 serializationStream.Write(Encoding.UTF8.GetBytes(((int)idAttr.response).ToString("D2")), 0, 2);
             }
-            foreach(PropertyDescriptor prop in TypeDescriptor.GetProperties(graph).Sort(new FieldComparer(false))) {
+            foreach(PropertyDescriptor prop in TypeDescriptor.GetProperties(Verify(graph)).Sort(new FieldComparer(false))) {
                 Sip2FieldAttribute attr = prop.Attributes.OfType<Sip2FieldAttribute>().FirstOrDefault();
                 if(attr != null && attr.Version <= _config.Version) {
                     if(((_config.isDebug && attr.Order < 101) || (!_config.isDebug && attr.Order < 100))) {

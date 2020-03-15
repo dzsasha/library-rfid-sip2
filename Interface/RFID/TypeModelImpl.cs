@@ -17,12 +17,12 @@ namespace IS.Interface.RFID {
         public TypeModelImpl(TypeModel modelModel, string id, bool UseRead = true) {
             _id = id;
             Model = modelModel;
-            if (UseRead) {
+            if(UseRead) {
                 try {
-                    foreach (ModelImpl modelImpl in (new T() { Model = modelModel }).Read(id)) {
+                    foreach(ModelImpl modelImpl in (new T() { Model = modelModel }).Read(id)) {
                         Add(modelImpl);
                     }
-                } catch (RfidException) {
+                } catch(RfidException) {
                 }
             }
         }

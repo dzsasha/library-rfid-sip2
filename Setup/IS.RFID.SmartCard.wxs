@@ -5,9 +5,9 @@
 			<Component Id="IS.RFID.SmartCard.Application" Guid="9701A727-0877-4E6A-8015-43807626464D" KeyPath="yes">
 				<util:XmlConfig Id="IS.RFID.SmartCard.readers" File="[#WindowsServiceConfig]" Action="create" On="install" ElementPath="//configuration/rfid.service/readers" Node="document" Sequence="1">
 					<![CDATA[<reader object="RFID.SmartCard">
-                  <add name="DllTool" type="String" value="IS.RFID.Tools.dll"/>
-                  <add name="NumberReplace" type="String" value="FourFirstReverse"/>
-                </reader>]]>
+        <add name="DllTool" type="String" value="IS.RFID.Tools.dll"/>
+        <add name="NumberReplace" type="String" value="FourFirstReverse"/>
+          </reader>]]>
 				</util:XmlConfig>
 			</Component>
 			<Component Id="IS.RFID.SmartCard.CS.Application" Guid="CB5DFF5D-98E4-455B-8B9A-B47DBEB75999" KeyPath="yes">
@@ -27,6 +27,7 @@
 			<ComponentRef Id="IS.RFID.SmartCard.Application"/>
 			<ComponentRef Id="IS.RFID.SmartCard.CS.Application"/>
 			<ComponentRef Id="IS.RFID.SmartCard.Manifest"/>
+      <ComponentGroupRef Id="IS.RFID.Tools"/>
 		</ComponentGroup>
 	</Fragment>
 </Wix>

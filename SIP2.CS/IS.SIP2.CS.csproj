@@ -64,6 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CoreExt.cs" />
+    <Compile Include="Exceptions.cs" />
     <Compile Include="Interfaces.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>

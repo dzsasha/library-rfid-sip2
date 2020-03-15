@@ -23,7 +23,7 @@ namespace IS.SIP2.Cloud {
             Add(this as IRenewAll);
         }
 
-        private static object CS = new Object();
+        private static object CS = new object();
         #region implementation ISip2
         public ISip2Cmd[] commands => ToArray();
 
@@ -54,10 +54,10 @@ namespace IS.SIP2.Cloud {
                 foreach (string limit in _serverSettings) {
                     using (NCIPMessage message = config.param.GetAnswer(getLookupRequest(config.param, "com.informsystema.models.shared.CMSettingTypes", limit))) {
                         foreach (var item in message.getItem<LookupRequestResponse>().Items) {
-                            if (item is RequestId) {
-                                config.AddParam(new FieldImpl() { Name = (item as RequestId).RequestIdentifierType.Value, Type = TypeField.String, Value = (item as RequestId).RequestIdentifierValue });
-                            } else if (item is Problem) {
-                                Log.For(this).ErrorFormat("ERROR!!! LookupRequest({0}): {1}", limit, new Exception((item as Problem).ProblemDetail));
+                            if (item is RequestId requestId) {
+                                config.AddParam(new FieldImpl() { Name = requestId.RequestIdentifierType.Value, Type = TypeField.String, Value = requestId.RequestIdentifierValue });
+                            } else if (item is Problem problem) {
+                                Log.For(this).ErrorFormat("ERROR!!! LookupRequest({0}): {1}", limit, new Exception(problem.ProblemDetail));
                             }
                         }
                     }
@@ -65,8 +65,8 @@ namespace IS.SIP2.Cloud {
                 if (bRet) {
                     using (NCIPMessage message = config.param.GetAnswer(getLookupAgency(config.param))) {
                         foreach (var item in message.getItem<LookupAgencyResponse>().Items) {
-                            if ((item is OrganizationNameInformation) && (item as OrganizationNameInformation).OrganizationNameType.Value != "InstitutionId") {
-                                config.AddParam(new FieldImpl() { Name = "InstitutionId", Type = TypeField.String, Value = (item as OrganizationNameInformation).OrganizationName });
+                            if ((item is OrganizationNameInformation organizationNameInformation) && organizationNameInformation.OrganizationNameType.Value != "InstitutionId") {
+                                config.AddParam(new FieldImpl() { Name = "InstitutionId", Type = TypeField.String, Value = organizationNameInformation.OrganizationName });
                             }
                         }
                     }

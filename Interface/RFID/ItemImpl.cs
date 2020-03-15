@@ -1,21 +1,18 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace IS.Interface.RFID
-{
+namespace IS.Interface.RFID {
 	/// <summary>
 	/// Класс имплементации интерфейса IItem
 	/// </summary>
 	[DataContract(Name = "item", Namespace = "http://informsystema.com/marc/service/")]
 	[Serializable]
-	public class ItemImpl : IItem
-	{
+	public class ItemImpl : IItem {
 		/// <summary>
 		/// Конструктор по умолчанию
 		/// </summary>
 		/// <param name="id">Идентификатор метки</param>
-		public ItemImpl(string id)
-		{
+		public ItemImpl(string id) {
 			Id = id;
 		}
 
@@ -27,5 +24,14 @@ namespace IS.Interface.RFID
 		public string Id { get; private set; }
 
 		#endregion
+
+		/// <summary>
+		/// Определение оригинальности
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <returns></returns>
+		public override bool Equals(object obj) {
+			return (obj is ItemImpl) ? Id.Equals((obj as ItemImpl).Id) : false;
+		}
 	}
 }
