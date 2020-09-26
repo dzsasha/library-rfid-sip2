@@ -7,12 +7,19 @@ using IS.Interface;
 using IS.Interface.RFID;
 
 namespace IS.RFID.Service {
-    public class ReaderImpl : ConfigurationElement, IReader {
+    public class ReaderImpl : ConfigurationElement, IReader, IDisposable {
         /// <summary>
         /// Конструктор по умолчанию
         /// </summary>
         public ReaderImpl() {
         }
+        public ReaderImpl(ReaderImpl source) {
+            this.source = source;
+            if (source.Force && !this.source.Reader.InitReader(source.Params)) {
+                throw new Exception("Ошибка открытия реадера");
+            }
+        }
+        private ReaderImpl source { get; set; }
         /// <summary>
         /// Имя объекта для создания
         /// </summary>
@@ -89,6 +96,13 @@ namespace IS.RFID.Service {
             Log.For(this).Debug("CloseReader");
             Reader?.CloseReader();
         }
+
+        public void Dispose() {
+            if (source != null && source.Force) {
+                CloseReader();
+            }
+        }
+
         /// <summary>
         /// Получить прочитанные метки
         /// </summary>

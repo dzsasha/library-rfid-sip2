@@ -23,5 +23,17 @@ namespace IS.RFID.Tools {
             }
             return String.Format("{0}", Convert.ToInt64(sRet, 16));
         }
+        [DllExport("AllDecFourFirst", CallingConvention.StdCall)]
+        public static string AllFourFirstReverse(IntPtr input, int length) {
+            string sRet = "0x";
+            byte[] data = new byte[length];
+            Marshal.Copy(input, data, 0, length);
+            for(int i = 3; i > -1; i--) {
+                sRet += String.Format("{0:x2}", data[i]);
+            }
+            return String.Format("{0} {1}", 
+                Convert.ToInt64(String.Format("{0:x2}{1:x2}", data[length - 1], data[length - 2]), 16), 
+                Convert.ToInt64(sRet, 16));
+        }
     }
 }

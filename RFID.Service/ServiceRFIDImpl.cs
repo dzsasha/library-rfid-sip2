@@ -1,15 +1,8 @@
 ﻿using System;
-using System.Globalization;
 using System.Linq;
-using System.Collections.Generic;
 using System.ServiceModel.Web;
-using IS.Interface;
 using IS.Interface.RFID;
-using System.ServiceModel;
 using System.Net;
-using System.Timers;
-using System.Threading.Tasks;
-using System.ServiceModel.Channels;
 
 namespace IS.RFID.Service {
     public partial class ServiceImpl : IServiceRFID {

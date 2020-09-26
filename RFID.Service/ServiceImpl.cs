@@ -22,8 +22,8 @@ namespace IS.RFID.Service {
         private WebSocketServer server = null;
 
         private ReaderImpl getReader(string item) {
-            foreach(ReaderImpl reader in _readers) {
-                if(reader.Items.Any(_item => _item.Id.Equals(item))) {
+            foreach (ReaderImpl reader in _readers) {
+                if (reader.Items.Any(_item => _item.Id.Equals(item))) {
                     return reader;
                 }
             }
@@ -34,7 +34,7 @@ namespace IS.RFID.Service {
         /// </summary>
         public ServiceImpl() {
             try {
-                foreach(ReaderImpl reader in Readers.Cast<ReaderImpl>().Where(reader => !reader.Disable && reader.InitReader(reader.Params))) {
+                foreach (ReaderImpl reader in Readers.Cast<ReaderImpl>().Where(reader => !reader.Disable && reader.InitReader(reader.Params))) {
                     _readers.Add(reader);
                     reader.OnError += new ErrorEventHandler(reader_OnError);
                     Log.For(this).Debug($"ServiceImpl:ServiceImpl - Adding reader {reader.GetReaderType()}");
@@ -43,16 +43,16 @@ namespace IS.RFID.Service {
                     }
                 }
                 server = new WebSocketServer(Sockets.Port);
-                foreach(WebSocketImpl socketImpl in Sockets) {
+                foreach (WebSocketImpl socketImpl in Sockets) {
                     server.AddWebSocketService<WebSocketBehavior>($"/{socketImpl.Name}", () => getImpl(socketImpl));
                 }
                 server.Start();
-            } catch(Exception ex) {
+            } catch (Exception ex) {
                 Log.For(null).Error($"ServiceImpl:ServiceImpl - {ex.Message}");
             }
         }
         public static WebSocketBehavior getImpl(WebSocketImpl impl) {
-            return (WebSocketBehavior)Activator.CreateInstance(impl.types, new object[] { impl });
+            return (WebSocketBehavior) Activator.CreateInstance(impl.types, new object[] { impl });
         }
 
         void reader_OnError(object sender, ErrorEventArgs error) {
@@ -65,9 +65,9 @@ namespace IS.RFID.Service {
         public static Readers Readers {
             get {
                 try {
-                    ServiceSection section = (ServiceSection)ConfigurationManager.GetSection(ServiceSection.SectionName);
+                    ServiceSection section = (ServiceSection) ConfigurationManager.GetSection(ServiceSection.SectionName);
                     return section?.Readers;
-                } catch(Exception ex) {
+                } catch (Exception ex) {
                     Log.For(null).Error($"ServiceImpl:Readers - {ex.Message}");
                     return null;
                 }
@@ -79,9 +79,9 @@ namespace IS.RFID.Service {
         public static WebSockets Sockets {
             get {
                 try {
-                    ServiceSection section = (ServiceSection)ConfigurationManager.GetSection(ServiceSection.SectionName);
+                    ServiceSection section = (ServiceSection) ConfigurationManager.GetSection(ServiceSection.SectionName);
                     return section?.Sockets;
-                } catch(Exception ex) {
+                } catch (Exception ex) {
                     Log.For(null).Error($"ServiceImpl:Sockets - {ex.Message}");
                     return null;
                 }
@@ -93,7 +93,7 @@ namespace IS.RFID.Service {
         /// <returns>прочитанные карты</returns>
         public IItem[] Read() {
             HashSet<IItem> lRet = new HashSet<IItem>();
-            foreach(ReaderImpl reader in Readers.Cast<ReaderImpl>().Where(reader => reader.Disable && reader.InitReader(reader.Params))) {
+            foreach (ReaderImpl reader in Readers.Cast<ReaderImpl>().Where(reader => reader.Disable && reader.InitReader(reader.Params))) {
                 try {
                     reader.OnError += new ErrorEventHandler(reader_OnError);
                     Log.For(this).Debug($"ServiceImpl:Read - read from reader {reader.GetReaderType()}");
@@ -114,7 +114,7 @@ namespace IS.RFID.Service {
         /// Закрыть открытые реадеры
         /// </summary>
         public void CloseReaders() {
-            foreach(ReaderImpl reader in _readers) {
+            foreach (ReaderImpl reader in _readers) {
                 reader.CloseReader();
                 reader.OnError -= reader_OnError;
             }
@@ -124,16 +124,12 @@ namespace IS.RFID.Service {
         public IItem[] GetItems() {
             try {
                 _items.Clear();
-                foreach(ReaderImpl reader in _readers) {
-                    if (reader.Force && !reader.InitReader(reader.Params)) {
-                        continue;
-                    }
-                    _items.AddRange(Readers[reader.Name].Items);
-                    if (reader.Force) {
-                        reader.CloseReader();
+                foreach (ReaderImpl reader in _readers) {
+                    using (ReaderImpl _reader = new ReaderImpl(reader)) {
+                        _items.AddRange(Readers[reader.Name].Items);
                     }
                 }
-            } catch(Exception ex) {
+            } catch (Exception ex) {
                 Log.For(this).Error("ServiceImpl:GetItems() - {0}", ex);
                 throw ex;
             }
@@ -143,7 +139,7 @@ namespace IS.RFID.Service {
         public bool IsItem(string item) {
             try {
                 return GetItem(item) != null;
-            } catch(Exception ex) {
+            } catch (Exception ex) {
                 Log.For(this).Error($"ServiceImpl:IsItem - {ex.Message}");
                 throw ex;
             }
@@ -151,9 +147,12 @@ namespace IS.RFID.Service {
         public bool GetEas(string item) {
             try {
                 IItem _item = GetItem(item);
-                if(_item != null && _item.IsItemEx())
-                    return (_item as IItemEx).Eas;
-            } catch(Exception ex) {
+                if (_item != null && _item.IsItemEx()) {
+                    using (ReaderImpl reader = new ReaderImpl(getReader(item))) {
+                        return (_item as IItemEx).Eas;
+                    }
+                }
+            } catch (Exception ex) {
                 Log.For(this).Error($"ServiceImpl:GetEas - {ex.Message}");
                 throw ex;
             }
@@ -163,27 +162,31 @@ namespace IS.RFID.Service {
         public void SetEas(string item, bool eas) {
             try {
                 IItem _item = GetItem(item);
-                if(getReader(item).RevertEAS) {
-                    if(_item != null && _item.IsItemEx())
-                        (_item as IItemEx).Eas = !eas;
-                } else {
-                    if(_item != null && _item.IsItemEx())
-                        (_item as IItemEx).Eas = eas;
-                }
-            } catch(Exception ex) {
+                using (ReaderImpl reader = new ReaderImpl(getReader(item))) {
+                    if (getReader(item).RevertEAS) {
+                        if (_item != null && _item.IsItemEx())
+                            (_item as IItemEx).Eas = !eas;
+                    } else {
+                        if (_item != null && _item.IsItemEx())
+                            (_item as IItemEx).Eas = eas;
+                    }
+                };
+            } catch (Exception ex) {
                 Log.For(this).Error($"ServiceImpl:SetEas - {ex.Message}");
                 throw ex;
             }
         }
         public ModelImpl[] GetModels(string item) {
             List<ModelImpl> lRet = new List<ModelImpl>();
-            if(item != null) {
+            if (item != null) {
                 try {
                     IItem _item = GetItem(item);
-                    if(_item != null && _item.IsItemModel()) {
-                        lRet.AddRange(from typeModel in (_item as IItemModel).Models from model in typeModel select new ModelImpl(model.Model) { Id = model.Id, Type = model.Type });
+                    if (_item != null && _item.IsItemModel()) {
+                        using (ReaderImpl reader = new ReaderImpl(getReader(item))) {
+                            lRet.AddRange(from typeModel in (_item as IItemModel).Models from model in typeModel select new ModelImpl(model.Model) { Id = model.Id, Type = model.Type });
+                        }
                     }
-                } catch(Exception ex) {
+                } catch (Exception ex) {
                     Log.For(this).Error($"ServiceImpl:GetModels - {ex.Message}");
                     throw ex;
                 }
@@ -194,12 +197,14 @@ namespace IS.RFID.Service {
             ModelImpl pRet = null;
             try {
                 IItem _item = GetItem(item);
-                if(_item != null && _item.IsItemModel()) {
-                    foreach(ITypeModel model in (_item as IItemModel).Models.Where(model => model.Model == typeModel)) {
-                        pRet = new ModelImpl(typeModel) { Id = model.Default.Id, Type = model.Default.Type };
+                if (_item != null && _item.IsItemModel()) {
+                    using (ReaderImpl reader = new ReaderImpl(getReader(item))) {
+                        foreach (ITypeModel model in (_item as IItemModel).Models.Where(model => model.Model == typeModel)) {
+                            pRet = new ModelImpl(typeModel) { Id = model.Default.Id, Type = model.Default.Type };
+                        }
                     }
                 }
-            } catch(Exception ex) {
+            } catch (Exception ex) {
                 Log.For(this).Error($"ServiceImpl:GetDefault - {ex.Message}");
                 throw ex;
             }
@@ -209,11 +214,13 @@ namespace IS.RFID.Service {
             List<TypeModel> lRet = new List<TypeModel>();
             try {
                 IItem _item = GetItem(item);
-                if(_item != null && _item.IsItemModel()) {
-                    lRet.AddRange((_item as IItemModel).Models.Select(model => model.Model));
+                if (_item != null && _item.IsItemModel()) {
+                    using (ReaderImpl reader = new ReaderImpl(getReader(item))) {
+                        lRet.AddRange((_item as IItemModel).Models.Select(model => model.Model));
+                    }
                 }
                 Log.For(this).Debug($"ServiceImpl:GetTypeModels - {lRet.Count}");
-            } catch(Exception ex) {
+            } catch (Exception ex) {
                 Log.For(this).Error($"ServiceImpl:GetTypeModels - {ex.Message}");
                 throw ex;
             }
@@ -221,21 +228,23 @@ namespace IS.RFID.Service {
         }
         public void WriteModel(string item, int index, ModelImpl model) {
             IItem _item = GetItem(item);
-            if(_item != null && _item.IsItemModel()) {
+            if (_item != null && _item.IsItemModel()) {
                 try {
-                    foreach(ITypeModel typeModel in (_item as IItemModel).Models) {
-                        if(typeModel.Model == model.Model) {
-                            IModel addModel = typeModel.Default;
-                            addModel.Id = model.Id;
-                            addModel.Type = model.Type;
-                            if(!typeModel.Any()) {
-                                typeModel.Add(addModel);
+                    using (ReaderImpl reader = new ReaderImpl(getReader(item))) {
+                        foreach (ITypeModel typeModel in (_item as IItemModel).Models) {
+                            if (typeModel.Model == model.Model) {
+                                IModel addModel = typeModel.Default;
+                                addModel.Id = model.Id;
+                                addModel.Type = model.Type;
+                                if (!typeModel.Any()) {
+                                    typeModel.Add(addModel);
+                                }
+                                addModel.Write();
+                                Log.For(this).Debug($"ServiceImpl:WriteModel - {addModel.Id}");
                             }
-                            addModel.Write();
-                            Log.For(this).Debug($"ServiceImpl:WriteModel - {addModel.Id}");
                         }
                     }
-                } catch(Exception ex) {
+                } catch (Exception ex) {
                     Log.For(this).Error($"ServiceImpl:WriteModel - {ex.Message}");
                     throw ex;
                 }
